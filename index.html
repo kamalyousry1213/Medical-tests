@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات المعمل - Kamal Yousry</title>
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tool-button {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tool-button i {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .tool-button span {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #007bff;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .modal-header button:hover {
+            color: #007bff;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            text-align: center;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-footer button:hover {
+            background-color: #0056b3;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .output {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #007bff;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>أدوات المعمل الاحترافية 🛠️</h1>
+
+    <!-- القائمة الرئيسية -->
+    <div class="main-menu">
+        <div class="tool-button" onclick="showModal('absorptionModal')">
+            <i class="fas fa-chart-line"></i>
+            <span>حساب الامتصاص</span>
+        </div>
+        <div class="tool-button" onclick="showModal('unitConverterModal')">
+            <i class="fas fa-exchange-alt"></i>
+            <span>تحويل الوحدات</span>
+        </div>
+        <div class="tool-button" onclick="showModal('dilutionModal')">
+            <i class="fas fa-flask"></i>
+            <span>حساب التخفيفات</span>
+        </div>
+        <div class="tool-button" onclick="showModal('reagentRatioModal')">
+            <i class="fas fa-vial"></i>
+            <span>حساب نسب الرياجينتات</span>
+        </div>
+    </div>
+
+    <!-- نوافذ الأدوات -->
+    <div id="absorptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>حساب الامتصاص 🎯</h2>
+                <button onclick="hideModal('absorptionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="absorption">الامتصاص:</label>
+                <input type="number" step="0.0001" id="absorption" required>
+                <label for="result">النتيجة:</label>
+                <input type="number" step="0.01" id="result" required>
+                <button type="button" onclick="addData()">إضافة بيانات ➕</button>
+
+                <h3>البيانات المدخلة 📋</h3>
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>الامتصاص</th>
+                            <th>النتيجة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataList">
+                        <!-- البيانات ستضاف هنا -->
+                    </tbody>
+                </table>
+
+                <h3>حساب الامتصاص المطلوب 🧮</h3>
+                <label for="desiredResult">النتيجة المرغوبة:</label>
+                <input type="number" step="0.01" id="desiredResult" required>
+                <button type="button" onclick="calculateAbsorption()">احسب الامتصاص 🚀</button>
+                <p id="absorptionOutput" class="output"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideModal('absorptionModal')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="unitConverterModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>تحويل الوحدات 🔄</h2>
+                <button onclick="hideModal('unitConverterModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="unitValue">القيمة:</label>
+                <input type="number" id="unitValue" required>
+                <label for="unitFrom">من الوحدة:</label>
+                <select id="unitFrom">
+                    <option value="g">جرام (g)</option>
+                    <option value="mg">مليجرام (mg)</option>
+                    <option value="µg">ميكروجرام (µg)</option>
+                    <option value="ng">نانوجرام (ng)</option>
+                    <option value="g/L">جرام/لتر (g/L)</option>
+                    <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
+                    <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
+                    <option value="mmol/L">ملي مول/لتر (mmol/L)</option>
+                    <option value="mEq/L">ملي مكافئ/لتر (mEq/L)</option>
+                    <option value="%">النسبة المئوية (%)</option>
+                    <option value="µL">ميكرولتر (µL)</option>
+                    <option value="mL">ملليلتر (mL)</option>
+                    <option value="L">لتر (L)</option>
+                    <option value="U/L">وحدة/لتر (U/L)</option>
+                    <option value="IU/L">وحدة دولية/لتر (IU/L)</option>
+                </select>
+                <label for="unitTo">إلى الوحدة:</label>
+                <select id="unitTo">
+                    <option value="g">جرام (g)</option>
+                    <option value="mg">مليجرام (mg)</option>
+                    <option value="µg">ميكروجرام (µg)</option>
+                    <option value="ng">نانوجرام (ng)</option>
+                    <option value="g/L">جرام/لتر (g/L)</option>
+                    <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
+                    <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
+                    <option value="mmol/L">ملي مول/لتر (mmol/L)</option>
+                    <option value="mEq/L">ملي مكافئ/لتر (mEq/L)</option>
+                    <option value="%">النسبة المئوية (%)</option>
+                    <option value="µL">ميكرولتر (µL)</option>
+                    <option value="mL">ملليلتر (mL)</option>
+                    <option value="L">لتر (L)</option>
+                    <option value="U/L">وحدة/لتر (U/L)</option>
+                    <option value="IU/L">وحدة دولية/لتر (IU/L)</option>
+                </select>
+                <button type="button" onclick="convertUnits()">تحويل 🔄</button>
+                <p id="unitOutput" class="output"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideModal('unitConverterModal')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dilutionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>حساب التخفيفات 🧪</h2>
+                <button onclick="hideModal('dilutionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="dilutionRatio">نسبة التخفيف (مثل 1:10):</label>
+                <input type="text" id="dilutionRatio" placeholder="1:10" required>
+                <button type="button" onclick="calculateDilution()">احسب التخفيف 🧪</button>
+                <p id="dilutionOutput" class="output"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideModal('dilutionModal')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reagentRatioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>حساب نسب الرياجينتات ⚗️</h2>
+                <button onclick="hideModal('reagentRatioModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="originalReagent1">الكمية الأصلية للرياجينت الأول (µL):</label>
+                <input type="number" id="originalReagent1" required>
+                <label for="originalReagent2">الكمية الأصلية للرياجينت الثاني (µL):</label>
+                <input type="number" id="originalReagent2" required>
+                <label for="newReagent1">الكمية الجديدة للرياجينت الأول (µL):</label>
+                <input type="number" id="newReagent1" required>
+                <button type="button" onclick="calculateReagentRatio()">احسب الكمية الجديدة ⚗️</button>
+                <p id="reagentOutput" class="output"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="hideModal('reagentRatioModal')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات حساب الامتصاص
+        let data = [];
+
+        // دالة لإظهار النافذة المنبثقة
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // دالة لإخفاء النافذة المنبثقة
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // دالة لإضافة بيانات الامتصاص
+        function addData() {
+            const absorption = parseFloat(document.getElementById('absorption').value);
+            const result = parseFloat(document.getElementById('result').value);
+
+            if (isNaN(absorption) || isNaN(result)) {
+                alert("يرجى إدخال قيم صحيحة! ❌");
+                return;
+            }
+
+            data.push({ x: absorption, y: result });
+            renderTable();
+            document.getElementById('absorption').value = '';
+            document.getElementById('result').value = '';
+            alert("تمت إضافة البيانات بنجاح! ✅");
+        }
+
+        // دالة لعرض البيانات في الجدول
+        function renderTable() {
+            const dataList = document.getElementById('dataList');
+            dataList.innerHTML = '';
+            data.forEach((point, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${point.x.toFixed(4)}</td>
+                    <td>${point.y.toFixed(2)}</td>
+                    <td>
+                        <button class="delete" onclick="deleteData(${index})">حذف 🗑️</button>
+                    </td>
+                `;
+                dataList.appendChild(row);
+            });
+        }
+
+        // دالة لحذف بيانات الامتصاص
+        function deleteData(index) {
+            data.splice(index, 1);
+            renderTable();
+            alert("تم حذف البيانات بنجاح! ✅");
+        }
+
+        // دالة لحساب الامتصاص المطلوب
+        function calculateAbsorption() {
+            const desiredResult = parseFloat(document.getElementById('desiredResult').value);
+            if (isNaN(desiredResult)) {
+                alert("يرجى إدخال نتيجة مرغوبة صحيحة! ❌");
+                return;
+            }
+
+            const regression = calculateRegression();
+            if (!regression) return;
+
+            const { a, b } = regression;
+            const requiredAbsorption = (desiredResult - b) / a;
+
+            document.getElementById('absorptionOutput').textContent = `الامتصاص المطلوب: ${requiredAbsorption.toFixed(4)} 🎉`;
+        }
+
+        // دالة لحساب الانحدار الخطي
+        function calculateRegression() {
+            const n = data.length;
+            if (n < 2) {
+                alert("يجب إدخال على الأقل نقطتين من البيانات! ❌");
+                return null;
+            }
+
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            for (let point of data) {
+                sumX += point.x;
+                sumY += point.y;
+                sumXY += point.x * point.y;
+                sumX2 += point.x * point.x;
+            }
+
+            const a = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX); // الميل
+            const b = (sumY - a * sumX) / n; // التقاطع
+
+            return { a, b };
+        }
+
+        // دالة تحويل الوحدات
+        function convertUnits() {
+            const unitValue = parseFloat(document.getElementById('unitValue').value);
+            const unitFrom = document.getElementById('unitFrom').value;
+            const unitTo = document.getElementById('unitTo').value;
+
+            if (isNaN(unitValue)) {
+                alert("يرجى إدخال قيمة صحيحة! ❌");
+                return;
+            }
+
+            const conversionFactors = {
+                g: { mg: 1000, µg: 1e6, ng: 1e9 },
+                mg: { g: 0.001, µg: 1000, ng: 1e6 },
+                µg: { g: 1e-6, mg: 0.001, ng: 1000 },
+                ng: { g: 1e-9, mg: 1e-6, µg                ng: { g: 1e-9, mg: 1e-6, µg: 0.001 },
+                'g/L': { 'mg/dL': 100, 'µg/mL': 1000, 'mmol/L': 1, 'mEq/L': 1, '%': 0.1 },
+                'mg/dL': { 'g/L': 0.01, 'µg/mL': 10, 'mmol/L': 0.01, 'mEq/L': 0.01, '%': 0.001 },
+                'µg/mL': { 'g/L': 0.001, 'mg/dL': 0.1, 'mmol/L': 0.001, 'mEq/L': 0.001, '%': 0.0001 },
+                'mmol/L': { 'g/L': 1, 'mg/dL': 100, 'µg/mL': 1000, 'mEq/L': 1, '%': 0.1 },
+                'mEq/L': { 'g/L': 1, 'mg/dL': 100, 'µg/mL': 1000, 'mmol/L': 1, '%': 0.1 },
+                '%': { 'g/L': 10, 'mg/dL': 1000, 'µg/mL': 10000, 'mmol/L': 10, 'mEq/L': 10 },
+                µL: { mL: 0.001, L: 1e-6 },
+                mL: { µL: 1000, L: 0.001 },
+                L: { µL: 1e6, mL: 1000 },
+                'U/L': { 'IU/L': 1 },
+                'IU/L': { 'U/L': 1 }
+            };
+
+            let result;
+            if (unitFrom === unitTo) {
+                result = unitValue;
+            } else if (conversionFactors[unitFrom] && conversionFactors[unitFrom][unitTo]) {
+                result = unitValue * conversionFactors[unitFrom][unitTo];
+            } else {
+                alert("التحويل غير مدعوم بين الوحدات المحددة! ❌");
+                return;
+            }
+
+            document.getElementById('unitOutput').textContent = `النتيجة: ${result.toFixed(4)} ${unitTo}`;
+        }
+
+        // دالة حساب التخفيفات
+        function calculateDilution() {
+            const dilutionRatio = document.getElementById('dilutionRatio').value;
+            const [part1, part2] = dilutionRatio.split(':').map(Number);
+
+            if (isNaN(part1) || isNaN(part2) || part1 <= 0 || part2 <= 0) {
+                alert("يرجى إدخال نسبة تخفيف صحيحة! ❌");
+                return;
+            }
+
+            const totalVolume = 1000; // حجم العينة 1000 ميكرولتر
+            const sampleVolume = (totalVolume * part1) / (part1 + part2);
+            const diluentVolume = totalVolume - sampleVolume;
+
+            document.getElementById('dilutionOutput').textContent = `
+                حجم العينة: ${sampleVolume.toFixed(2)} µL
+                حجم المحلول الملحي: ${diluentVolume.toFixed(2)} µL
+            `;
+        }
+
+        // دالة حساب نسب الرياجينتات
+        function calculateReagentRatio() {
+            const originalReagent1 = parseFloat(document.getElementById('originalReagent1').value);
+            const originalReagent2 = parseFloat(document.getElementById('originalReagent2').value);
+            const newReagent1 = parseFloat(document.getElementById('newReagent1').value);
+
+            if (isNaN(originalReagent1) || isNaN(originalReagent2) || isNaN(newReagent1) || originalReagent1 <= 0 || originalReagent2 <= 0 || newReagent1 <= 0) {
+                alert("يرجى إدخال قيم صحيحة! ❌");
+                return;
+            }
+
+            // حساب النسبة الأصلية
+            const ratio = originalReagent1 / originalReagent2;
+
+            // حساب الكمية الجديدة للرياجينت الثاني
+            const newReagent2 = newReagent1 / ratio;
+
+            document.getElementById('reagentOutput').textContent = `الكمية الجديدة للرياجينت الثاني: ${newReagent2.toFixed(2)} µL`;
+        }
+    </script>
+</body>
+</html>
