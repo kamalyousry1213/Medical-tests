@@ -56,7 +56,7 @@
       text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
       margin-bottom: 10px;
     }
-    /* تم إزالة زر الوضع الليلي */
+    /* إزالة زر الوضع الليلي كما طلبت */
     /* === Navigation: أزرار كبيرة مع أيقونات === */
     nav {
       display: flex;
@@ -187,6 +187,7 @@
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
+      font-size: 0.9rem;
     }
     th {
       background: #f8f9fa;
@@ -202,9 +203,9 @@
       margin-top: 20px;
     }
     /* === Responsive Design === */
-    @media (max-width: 600px) {
-      header h1 { font-size: 2.2rem; }
-      nav a { flex: 1 1 100%; }
+    @media (max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      nav a { flex: 1 1 100%; font-size: 0.9rem; }
       .field-group {
         flex-direction: column;
         align-items: flex-start;
@@ -214,6 +215,14 @@
       .field-group select {
         flex: 1 1 100%;
       }
+      main { padding: 15px; }
+      table, th, td { font-size: 0.8rem; }
+    }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.8rem; }
+      nav a { padding: 10px; }
+      .description { font-size: 0.85rem; }
+      .field-group input, .field-group select, .field-group button { font-size: 0.9rem; }
     }
     /* === Toast Notification === */
     .toast {
@@ -235,7 +244,7 @@
 <body>
   <header>
     <h1><i class="fas fa-flask"></i> LabMate - رفيقك في المعمل</h1>
-    <!-- زر الوضع الليلي تم إلغاؤه -->
+    <!-- تم إزالة زر الوضع الليلي -->
     <nav>
       <a href="#home" data-target="home" class="active"><i class="fas fa-home"></i> الرئيسية</a>
       <a href="#absorption" data-target="absorption"><i class="fas fa-chart-line"></i> Absorption<br><small>قيمة الامتصاص</small></a>
@@ -265,8 +274,8 @@
     <section id="absorption">
       <h2>Absorption Calculation</h2>
       <p class="description">
-        تستخدم هذه الأداة تحليل الانحدار الخطي لحساب قيمة الامتصاص المطلوبة. <br>
-        <small>ملاحظة: القيم السالبة مسموحة (قد تظهر من الجهاز حسب المعايرة).</small>
+        تستخدم هذه الأداة تحليل الانحدار الخطي لحساب قيمة الامتصاص المطلوبة.<br>
+        <small>ملاحظة: القيم السالبة مسموحة.</small>
       </p>
       <div class="field-group">
         <label class="eng" title="ادخل قيمة الامتصاص">Absorption Value</label>
@@ -355,7 +364,7 @@
       <h2>Dilution Calculation</h2>
       <p class="description">
         أدخل نسبة التخفيف (مثال: 1:10) والحجم الإجمالي (µL) لحساب أحجام العينة والمخفف.<br>
-        <small>ملاحظة: النسبة هنا تُفسر بأن 1 جزء عينة و10 أجزاء مخفف، بحيث تكون العينة = إجمالي الحجم ÷ 10.</small>
+        <small>مثال: بنسبة 1:10 وحجم 1000 µL، العينة = 100 µL والمخفف = 900 µL.</small>
       </p>
       <div class="field-group">
         <label class="eng" title="نسبة العينة إلى المخفف">Dilution Ratio (e.g., 1:10)</label>
@@ -779,12 +788,11 @@
       const b = (sumY - a * sumX) / n;
       const required = (desired - b) / a;
       document.getElementById("absorptionOutput").textContent = `Required Absorption: ${required.toFixed(4)}`;
-      // تقديم نصيحة مبسطة بناءً على النتيجة
       let advice = "";
       if(required < 0) {
         advice = "النتيجة السالبة قد تشير إلى مشكلة في المعايرة. يُرجى مراجعة الجهاز.";
       } else if(required > 1) {
-        advice = "الامتصاص مرتفع، يُنصح بمراجعة إعدادات القياس.";
+        advice = "الامتصاص مرتفع؛ يُنصح بمراجعة إعدادات القياس.";
       } else {
         advice = "النتيجة ضمن المعدل الطبيعي.";
       }
@@ -806,12 +814,11 @@
       if(!ratioStr || isNaN(total) || total <= 0) { showToast("Enter valid dilution ratio and volume."); return; }
       const parts = ratioStr.split(":").map(Number);
       if(parts.length !== 2 || parts.some(isNaN) || parts[0] <= 0 || parts[1] <= 0) { showToast("Ratio must be in format x:y with positive numbers."); return; }
-      // تعديل الصيغة بحيث يكون Sample = total / parts[1]؛ مثلاً 1:10 → 1000/10 = 100
+      // تعديل الصيغة بحيث يكون Sample = total / الجزء الثاني من النسبة
       const sample = total / parts[1];
       const diluent = total - sample;
       document.getElementById("dilutionOutput").textContent = `Sample: ${sample.toFixed(2)} µL, Diluent: ${diluent.toFixed(2)} µL`;
-      // تقديم نصيحة
-      let advice = sample < 100 ? "يجب التأكد من الكميات؛ العينة أقل من المتوقع." : "النسبة تبدو جيدة.";
+      let advice = sample < (total/10) ? "عينة أقل من المتوقع؛ تأكد من النسبة." : "النسبة تبدو جيدة.";
       document.getElementById("dilutionAdvice").textContent = advice;
     }
     function resetDilution() {
@@ -912,7 +919,7 @@
       let osmolality = 2 * (sodium + potassium) + (glucose / 18) + (bun / 2.8);
       const outUnit = document.getElementById("osmolalityUnit").value;
       document.getElementById("osmolalityOutput").textContent = `Serum Osmolality: ${osmolality.toFixed(2)} ${outUnit}`;
-      let advice = osmolality < 280 || osmolality > 300 ? "أوزمولية المصل غير طبيعية؛ راجع الطبيب." : "أوزمولية المصل طبيعية.";
+      let advice = (osmolality < 280 || osmolality > 300) ? "أوزمولية المصل غير طبيعية؛ راجع الطبيب." : "أوزمولية المصل طبيعية.";
       document.getElementById("osmolalityAdvice").textContent = advice;
     }
     function resetOsmolality() {
@@ -984,7 +991,6 @@
       showToast("Iron deficiency tool reset.");
     }
     /************** Global Reference Ranges Section **************/
-    // بيانات افتراضية للنطاقات المرجعية لكل 126 تحليل
     const refRangesDefault = [
       // 1. BMP & CMP
       { test: "Glucose (Blood Sugar)", ref: "70 - 100", unit: "mg/dL", editable: "70 - 100" },
@@ -1128,10 +1134,9 @@
       { test: "Ceruloplasmin", ref: "N/A", unit: "", editable: "N/A" },
       { test: "Alpha-1 Antitrypsin (AAT)", ref: "N/A", unit: "", editable: "N/A" }
     ];
-    // نسخة قابلة للتعديل (initially equal to default)
+    // نسخة قابلة للتعديل
     let refRanges = JSON.parse(JSON.stringify(refRangesDefault));
     let editMode = false;
-    // دالة تعبئة جدول النطاقات المرجعية
     function populateRefTable() {
       const tbody = document.getElementById("refTableBody");
       tbody.innerHTML = "";
@@ -1155,7 +1160,6 @@
         tbody.appendChild(row);
       });
     }
-    // دالة تفعيل وضع التعديل للنطاقات
     function toggleEditRefs() {
       editMode = true;
       document.getElementById("editRefBtn").style.display = "none";
@@ -1164,7 +1168,6 @@
       populateRefTable();
       showToast("Edit mode enabled.");
     }
-    // دالة حفظ التعديلات للنطاقات
     function saveRefs() {
       const inputs = document.querySelectorAll("#refTableBody input");
       inputs.forEach(input => {
@@ -1186,7 +1189,6 @@
       populateRefTable();
       showToast("Reference ranges saved.");
     }
-    // دالة إعادة تعيين النطاقات إلى الافتراضية
     function resetRefs() {
       refRanges = JSON.parse(JSON.stringify(refRangesDefault));
       editMode = false;
@@ -1196,7 +1198,6 @@
       populateRefTable();
       showToast("Reference ranges reset to default.");
     }
-    // دالة تصفية الجدول بحسب البحث
     function filterRefs() {
       const search = document.getElementById("searchTest").value.toLowerCase();
       const rows = document.querySelectorAll("#refTableBody tr");
@@ -1208,7 +1209,6 @@
           row.style.display = "none";
       });
     }
-    // عند تحميل الصفحة، تعبئة جدول النطاقات المرجعية
     populateRefTable();
   </script>
 </body>
