@@ -9,6 +9,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" defer>
   <style>
+    /* --- Variables and Base Styles --- */
     :root {
       --primary-color: #007bff;
       --secondary-color: #555;
@@ -19,6 +20,7 @@
       --light-shadow: rgba(0, 0, 0, 0.1);
       --dark-bg: #222;
       --dark-text: #ddd;
+      --transition-speed: 0.3s;
     }
     * { box-sizing: border-box; }
     body {
@@ -35,16 +37,19 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: background 0.3s, color 0.3s;
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
     body.dark-mode {
       background: #333;
       color: var(--dark-text);
     }
+    /* --- Header and Sticky Navigation --- */
     header, footer {
       background: rgba(255, 255, 255, 0.95);
       text-align: center;
       padding: 20px 30px;
+      position: relative;
+      z-index: 10;
     }
     body.dark-mode header, body.dark-mode footer {
       background: #444;
@@ -61,6 +66,15 @@
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
+    /* --- Dark Mode Toggle --- */
+    #darkModeToggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+    /* --- Navigation --- */
     nav {
       margin-top: 15px;
       display: grid;
@@ -68,6 +82,11 @@
       gap: 10px;
       max-width: 800px;
       margin: 0 auto;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 0;
     }
     nav a {
       display: block;
@@ -78,12 +97,13 @@
       border-radius: 4px;
       text-align: center;
       font-weight: 600;
-      transition: background 0.3s, color 0.3s;
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
     nav a:hover, nav a.active {
       background: var(--primary-color);
       color: var(--white);
     }
+    /* --- Main Content --- */
     main {
       flex: 1;
       max-width: 1200px;
@@ -94,9 +114,21 @@
       box-shadow: 0 4px 12px var(--light-shadow);
       width: 95%;
     }
-    section { display: none; }
-    section.active { display: block; }
-    h2 { color: var(--primary-color); margin-top: 0; }
+    section {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+      display: none;
+    }
+    section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    h2 {
+      color: var(--primary-color);
+      margin-top: 0;
+    }
     .description {
       background: #f7f7f7;
       border-left: 4px solid var(--primary-color);
@@ -106,6 +138,7 @@
       font-size: 0.95rem;
       line-height: 1.4;
     }
+    /* --- Form Elements --- */
     .field-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -113,9 +146,17 @@
       align-items: center;
       margin-bottom: 10px;
     }
-    .field-group label { font-weight: 600; }
-    .field-group .eng { text-align: right; color: var(--primary-color); }
-    .field-group .arb { text-align: left; color: var(--accent-color); }
+    .field-group label {
+      font-weight: 600;
+    }
+    .field-group .eng {
+      text-align: right;
+      color: var(--primary-color);
+    }
+    .field-group .arb {
+      text-align: left;
+      color: var(--accent-color);
+    }
     input, select, button {
       width: 100%;
       padding: 10px;
@@ -123,21 +164,28 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
-      transition: border-color 0.3s ease;
+      transition: border-color var(--transition-speed) ease;
     }
-    input:focus, select:focus { border-color: var(--primary-color); outline: none; }
+    input:focus, select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
     button {
       background: var(--primary-color);
       color: var(--white);
       cursor: pointer;
       border: none;
-      transition: background 0.3s;
+      transition: background var(--transition-speed);
     }
-    button:hover { background: #0056b3; }
+    button:hover {
+      background: #0056b3;
+    }
     .reset-btn {
       background: #dc3545;
     }
-    .reset-btn:hover { background: #c82333; }
+    .reset-btn:hover {
+      background: #c82333;
+    }
     .output {
       font-weight: bold;
       margin-top: 10px;
@@ -148,15 +196,22 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 15px;
+      overflow-x: auto;
+      display: block;
     }
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
     }
-    th { background: #f8f9fa; }
-    footer { font-size: 0.9rem; color: #777; }
-    /* Toast notification styling */
+    th {
+      background: #f8f9fa;
+    }
+    footer {
+      font-size: 0.9rem;
+      color: #777;
+    }
+    /* --- Toast Notification --- */
     .toast {
       position: fixed;
       top: 20px;
@@ -175,16 +230,12 @@
       pointer-events: auto;
     }
     @media (max-width: 600px) {
-      header h1 { font-size: 2.3rem; }
-      nav { grid-template-columns: 1fr; }
-    }
-    /* زر تبديل الوضع الداكن */
-    #darkModeToggle {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
+      header h1 {
+        font-size: 2.3rem;
+      }
+      nav {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -209,10 +260,10 @@
   </header>
   
   <main>
-    <!-- عنصر عرض الرسائل (Toast) -->
+    <!-- Toast Message -->
     <div id="toast" class="toast"></div>
     
-    <!-- قسم الرئيسية -->
+    <!-- Home Section -->
     <section id="home" class="active">
       <h2>مرحباً بك في LabMate</h2>
       <p class="description">
@@ -220,19 +271,19 @@
       </p>
     </section>
     
-    <!-- أداة حساب الامتصاص -->
+    <!-- Absorption Tool -->
     <section id="absorption">
       <h2>Absorption Calculation</h2>
       <p class="description">
         تستخدم هذه الأداة تحليل الانحدار الخطي لحساب قيمة الامتصاص المطلوبة.
       </p>
       <div class="field-group">
-        <label class="eng">Absorption Value</label>
+        <label class="eng" title="ادخل قيمة الامتصاص">Absorption Value</label>
         <label class="arb">قيمة الامتصاص</label>
       </div>
       <input type="number" step="0.0001" id="absorptionVal" placeholder="Enter absorption value">
       <div class="field-group">
-        <label class="eng">Result</label>
+        <label class="eng" title="ادخل النتيجة المقاسة">Result</label>
         <label class="arb">النتيجة</label>
       </div>
       <input type="number" step="0.01" id="resultVal" placeholder="Enter result">
@@ -249,7 +300,7 @@
         <tbody></tbody>
       </table>
       <div class="field-group">
-        <label class="eng">Desired Result</label>
+        <label class="eng" title="ادخل النتيجة المرغوبة">Desired Result</label>
         <label class="arb">النتيجة المرغوبة</label>
       </div>
       <input type="number" step="0.01" id="desiredResult" placeholder="Enter desired result">
@@ -257,19 +308,19 @@
       <p id="absorptionOutput" class="output"></p>
     </section>
     
-    <!-- أداة تحويل الوحدات -->
+    <!-- Unit Converter Tool -->
     <section id="unitConverter">
       <h2>Unit Converter</h2>
       <p class="description">
-        حوّل بين وحدات القياس المختلفة بسهولة. يمكنك اختيار أي وحدة من القائمة أدناه.
+        حوّل بين وحدات القياس المختلفة بسهولة. اختر القيمة والوحدات المطلوبة.
       </p>
       <div class="field-group">
-        <label class="eng">Value</label>
+        <label class="eng" title="ادخل القيمة">Value</label>
         <label class="arb">القيمة</label>
       </div>
       <input type="number" id="unitValue" placeholder="Enter value">
       <div class="field-group">
-        <label class="eng">From Unit</label>
+        <label class="eng" title="اختر الوحدة المبدئية">From Unit</label>
         <label class="arb">من الوحدة</label>
       </div>
       <select id="unitFrom">
@@ -287,7 +338,7 @@
         <option value="ng/dL">ng/dL</option>
       </select>
       <div class="field-group">
-        <label class="eng">To Unit</label>
+        <label class="eng" title="اختر الوحدة المراد التحويل إليها">To Unit</label>
         <label class="arb">إلى الوحدة</label>
       </div>
       <select id="unitTo">
@@ -309,19 +360,19 @@
       <p id="unitOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب التخفيف -->
+    <!-- Dilution Tool -->
     <section id="dilution">
       <h2>Dilution Calculation</h2>
       <p class="description">
         أدخل نسبة التخفيف (مثال: 1:10) والحجم الإجمالي (µL) لحساب أحجام العينة والمخفف.
       </p>
       <div class="field-group">
-        <label class="eng">Dilution Ratio (e.g., 1:10)</label>
+        <label class="eng" title="نسبة العينة إلى المخفف">Dilution Ratio (e.g., 1:10)</label>
         <label class="arb">نسبة التخفيف (مثال: 1:10)</label>
       </div>
       <input type="text" id="dilutionRatio" placeholder="Enter dilution ratio">
       <div class="field-group">
-        <label class="eng">Total Volume (µL)</label>
+        <label class="eng" title="الحجم الإجمالي للحل">Total Volume (µL)</label>
         <label class="arb">الحجم الإجمالي (µL)</label>
       </div>
       <input type="number" id="totalVolume" value="1000">
@@ -330,24 +381,24 @@
       <p id="dilutionOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب نسب الرياجينتات -->
+    <!-- Reagent Ratio Tool -->
     <section id="reagentRatio">
       <h2>Reagent Ratio Calculation</h2>
       <p class="description">
         أدخل الكميات الأصلية وتعديل الكمية المطلوبة للرياجينت الأول لحساب الكمية الجديدة للرياجينت الثاني.
       </p>
       <div class="field-group">
-        <label class="eng">Original Reagent 1 (µL)</label>
+        <label class="eng" title="الكمية الأصلية للرياجينت الأول">Original Reagent 1 (µL)</label>
         <label class="arb">الكمية الأصلية للرياجينت الأول (µL)</label>
       </div>
       <input type="number" id="originalReagent1" placeholder="Enter original amount">
       <div class="field-group">
-        <label class="eng">Original Reagent 2 (µL)</label>
+        <label class="eng" title="الكمية الأصلية للرياجينت الثاني">Original Reagent 2 (µL)</label>
         <label class="arb">الكمية الأصلية للرياجينت الثاني (µL)</label>
       </div>
       <input type="number" id="originalReagent2" placeholder="Enter original amount">
       <div class="field-group">
-        <label class="eng">New Reagent 1 (µL)</label>
+        <label class="eng" title="الكمية الجديدة للرياجينت الأول">New Reagent 1 (µL)</label>
         <label class="arb">الكمية الجديدة للرياجينت الأول (µL)</label>
       </div>
       <input type="number" id="newReagent1" placeholder="Enter new amount">
@@ -356,29 +407,29 @@
       <p id="reagentOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب LDL والمخاطر -->
+    <!-- LDL & Risk Tool -->
     <section id="ldlRisk">
       <h2>LDL & Risk Calculation</h2>
       <p class="description">
         أدخل القيم لحساب LDL باستخدام معادلة Friedewald وحساب مؤشرين تقديريين للمخاطر.
       </p>
       <div class="field-group">
-        <label class="eng">Total Cholesterol</label>
+        <label class="eng" title="الكوليسترول الكلي">Total Cholesterol</label>
         <label class="arb">الكوليسترول الكلي</label>
       </div>
       <input type="number" id="totalCholesterol" placeholder="e.g., 200">
       <div class="field-group">
-        <label class="eng">HDL</label>
+        <label class="eng" title="الكوليسترول الجيد (HDL)">HDL</label>
         <label class="arb">HDL (الكوليسترول الجيد)</label>
       </div>
       <input type="number" id="hdl" placeholder="e.g., 50">
       <div class="field-group">
-        <label class="eng">Triglycerides</label>
+        <label class="eng" title="الدهون الثلاثية">Triglycerides</label>
         <label class="arb">الدهون الثلاثية</label>
       </div>
       <input type="number" id="triglycerides" placeholder="e.g., 150">
       <div class="field-group">
-        <label class="eng">Select Units</label>
+        <label class="eng" title="اختر الوحدات المستخدمة">Select Units</label>
         <label class="arb">اختر الوحدات</label>
       </div>
       <div class="field-group">
@@ -401,19 +452,19 @@
       <p id="riskOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب eGFR -->
+    <!-- eGFR Tool -->
     <section id="egfr">
       <h2>eGFR Calculation</h2>
       <p class="description">
         احسب قيمة eGFR باستخدام معادلة MDRD. اختر الوحدة المناسبة للكرياتينين.
       </p>
       <div class="field-group">
-        <label class="eng">Creatinine</label>
+        <label class="eng" title="ادخل قيمة الكرياتينين">Creatinine</label>
         <label class="arb">الكرياتينين</label>
       </div>
       <input type="number" step="0.01" id="creatinineVal" placeholder="Enter creatinine">
       <div class="field-group">
-        <label class="eng">Select Unit</label>
+        <label class="eng" title="اختر وحدة قياس الكرياتينين">Select Unit</label>
         <label class="arb">اختر الوحدة</label>
       </div>
       <select id="creatinineUnit">
@@ -421,12 +472,12 @@
         <option value="µmol/L">µmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Age (years)</label>
+        <label class="eng" title="ادخل العمر بالسنوات">Age (years)</label>
         <label class="arb">العمر (سنوات)</label>
       </div>
       <input type="number" step="0.1" id="ageVal" placeholder="Enter age">
       <div class="field-group">
-        <label class="eng">Race</label>
+        <label class="eng" title="اختر العرق">Race</label>
         <label class="arb">العرق</label>
       </div>
       <select id="race">
@@ -434,7 +485,7 @@
         <option value="AA">African American / أمريكي أفريقي</option>
       </select>
       <div class="field-group">
-        <label class="eng">Gender</label>
+        <label class="eng" title="اختر الجنس">Gender</label>
         <label class="arb">الجنس</label>
       </div>
       <select id="genderVal">
@@ -446,7 +497,7 @@
       <p id="egfrResultTool" class="output"></p>
     </section>
     
-    <!-- أداة حساب أوزمولية المصل -->
+    <!-- Serum Osmolality Tool -->
     <section id="osmolality">
       <h2>Serum Osmolality Calculation</h2>
       <p class="description">
@@ -454,7 +505,7 @@
         <em>Osmolality = 2 × (Na + K) + (Glucose/18) + (BUN/2.8)</em>
       </p>
       <div class="field-group">
-        <label class="eng">Sodium</label>
+        <label class="eng" title="ادخل قيمة الصوديوم">Sodium</label>
         <label class="arb">الصوديوم</label>
       </div>
       <input type="number" id="sodium" placeholder="Enter sodium">
@@ -463,7 +514,7 @@
         <option value="mmol/L">mmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Potassium</label>
+        <label class="eng" title="ادخل قيمة البوتاسيوم">Potassium</label>
         <label class="arb">البوتاسيوم</label>
       </div>
       <input type="number" id="potassium" placeholder="Enter potassium">
@@ -472,7 +523,7 @@
         <option value="mmol/L">mmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Glucose</label>
+        <label class="eng" title="ادخل قيمة الجلوكوز">Glucose</label>
         <label class="arb">الجلوكوز</label>
       </div>
       <input type="number" id="glucose" placeholder="Enter glucose">
@@ -481,7 +532,7 @@
         <option value="mmol/L">mmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">BUN / Urea</label>
+        <label class="eng" title="ادخل قيمة BUN أو اليوريا">BUN / Urea</label>
         <label class="arb">اليوريا / BUN</label>
       </div>
       <input type="number" id="bun" placeholder="Enter BUN or Urea">
@@ -490,7 +541,7 @@
         <option value="mmol/L">mmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Nitrogen Input Type</label>
+        <label class="eng" title="اختر نوع القيمة المُدخلة (BUN أو Urea)">Nitrogen Input Type</label>
         <label class="arb">نوع إدخال النيتروجين</label>
       </div>
       <div class="field-group">
@@ -500,7 +551,7 @@
         <label for="inputUrea">Urea</label>
       </div>
       <div class="field-group">
-        <label class="eng">Output Unit</label>
+        <label class="eng" title="اختر وحدة الناتج">Output Unit</label>
         <label class="arb">وحدة الناتج</label>
       </div>
       <select id="osmolalityUnit">
@@ -512,7 +563,7 @@
       <p id="osmolalityOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب HOMA-IR -->
+    <!-- HOMA-IR Tool -->
     <section id="homa">
       <h2>HOMA-IR Calculation</h2>
       <p class="description">
@@ -520,7 +571,7 @@
         <em>HOMA-IR = (Glucose × Insulin) / 405</em>
       </p>
       <div class="field-group">
-        <label class="eng">Glucose</label>
+        <label class="eng" title="ادخل قيمة السكر">Glucose</label>
         <label class="arb">السكر</label>
       </div>
       <input type="number" id="homaGlucose" placeholder="Enter glucose">
@@ -529,7 +580,7 @@
         <option value="mmol/L">mmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Insulin</label>
+        <label class="eng" title="ادخل قيمة الأنسولين">Insulin</label>
         <label class="arb">الأنسولين</label>
       </div>
       <input type="number" id="homaInsulin" placeholder="Enter insulin">
@@ -541,24 +592,24 @@
       <p id="homaOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب خطر النزيف/التجلط -->
+    <!-- Bleeding/Clotting Risk Tool -->
     <section id="bleedingRisk">
       <h2>Bleeding/Clotting Risk Calculation</h2>
       <p class="description">
         أدخل قيم PT و PTT و INR مع اختيار الوحدات، ثم احسب مؤشر خطر النزيف/التجلط.
       </p>
       <div class="field-group">
-        <label class="eng">PT</label>
+        <label class="eng" title="ادخل زمن البروثرومبين">PT</label>
         <label class="arb">زمن البروثرومبين</label>
       </div>
       <input type="number" id="pt" placeholder="Enter PT">
       <div class="field-group">
-        <label class="eng">PTT</label>
+        <label class="eng" title="ادخل زمن التخثر الجزئي">PTT</label>
         <label class="arb">زمن التخثر الجزئي</label>
       </div>
       <input type="number" id="ptt" placeholder="Enter PTT">
       <div class="field-group">
-        <label class="eng">INR</label>
+        <label class="eng" title="ادخل قيمة INR">INR</label>
         <label class="arb">النسبة الدولية (INR)</label>
       </div>
       <input type="number" step="0.01" id="inr" placeholder="Enter INR">
@@ -567,14 +618,14 @@
       <p id="bleedingRiskOutput" class="output"></p>
     </section>
     
-    <!-- أداة حساب نقص الحديد والأنيميا -->
+    <!-- Iron Deficiency & Anemia Tool -->
     <section id="ironAnemia">
       <h2>Iron Deficiency & Anemia Calculation</h2>
       <p class="description">
         أدخل القيم التالية مع اختيار الوحدات لكل معطى لحساب Transferrin Saturation وتقدير احتمالية نقص الحديد.
       </p>
       <div class="field-group">
-        <label class="eng">Ferritin</label>
+        <label class="eng" title="ادخل قيمة الفيريتين">Ferritin</label>
         <label class="arb">الفيريتين</label>
       </div>
       <input type="number" id="ferritin" placeholder="Enter ferritin">
@@ -583,7 +634,7 @@
         <option value="µg/L">µg/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">Serum Iron</label>
+        <label class="eng" title="ادخل نسبة الحديد في المصل">Serum Iron</label>
         <label class="arb">نسبة الحديد في المصل</label>
       </div>
       <input type="number" id="serumIron" placeholder="Enter serum iron">
@@ -592,7 +643,7 @@
         <option value="µmol/L">µmol/L</option>
       </select>
       <div class="field-group">
-        <label class="eng">TIBC</label>
+        <label class="eng" title="ادخل قيمة السعة الكلية لربط الحديد">TIBC</label>
         <label class="arb">السعة الكلية لربط الحديد</label>
       </div>
       <input type="number" id="tibc" placeholder="Enter TIBC">
@@ -605,7 +656,7 @@
       <p id="ironOutput" class="output"></p>
     </section>
     
-    <!-- أداة النطاقات المرجعية -->
+    <!-- Global Reference Ranges Tool -->
     <section id="globalRef">
       <h2>Global Reference Ranges</h2>
       <p class="description">
@@ -616,7 +667,7 @@
       <button id="resetRefBtn" onclick="resetRefs()" style="display:none;">Reset Default / إعادة التعيين</button>
       <br>
       <label class="field-group">
-        <span class="eng">Search Test</span>
+        <span class="eng" title="ابحث عن تحليل">Search Test</span>
         <span class="arb">ابحث عن التحليل</span>
       </label>
       <input type="text" id="searchTest" onkeyup="filterRefs()" placeholder="Enter test name...">
@@ -641,14 +692,12 @@
   </footer>
   
   <script defer>
-    /************** وظائف Toast, Dark Mode & Navigation **************/
+    /************** Common Functions: Toast, Dark Mode & Navigation **************/
     function showToast(message) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
       toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
+      setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
     
     document.getElementById('darkModeToggle').addEventListener('click', function() {
@@ -680,14 +729,13 @@
     });
     
     /************** Unit Converter **************/
-    // جدول تحويل للوحدات (مبسّط)
     const factors = {
-      // Mass
+      // Mass conversions
       g: { mg: 1000, µg: 1e6, ng: 1e9 },
       mg: { g: 0.001, µg: 1000, ng: 1e6 },
       µg: { g: 1e-6, mg: 0.001, ng: 1000 },
       ng: { g: 1e-9, mg: 1e-6, µg: 0.001 },
-      // Concentration (للبعض مثل الجلوكوز)
+      // Concentration conversions (مثال للجلوكوز)
       "mg/dL": { "mmol/L": 0.0555, "µmol/L": 55.5 },
       "mmol/L": { "mg/dL": 18, "µmol/L": 1000 },
       "µmol/L": { "mg/dL": 0.018, "mmol/L": 0.001 },
@@ -933,7 +981,7 @@
         const bunUnit = document.getElementById("bunUnit").value;
         if(glucoseUnit === "mmol/L") glucose *= 18;
         if(bunUnit === "mmol/L") bun *= 2.8;
-        // تحويل Urea إلى BUN إذا كان المستخدم قد اختار Urea
+        // تحويل Urea إلى BUN إذا اختار المستخدم Urea
         const nitrogenType = document.querySelector('input[name="nitrogenType"]:checked').value;
         if(nitrogenType === "Urea") {
           bun = bun / 2.14;
@@ -1041,9 +1089,9 @@
     }
     
     /************** Global Reference Ranges Tool **************/
-    // قائمة افتراضية شاملة بناءً على المتطلبات
+    // مصفوفة النطاقات الافتراضية تشمل 125 اختبارًا مقسمة إلى 15 فئة كما طلبت
     const defaultRefs = [
-      // 1. تحاليل كيمياء الدم (BMP & CMP)
+      // 1. BMP & CMP
       { test: "Glucose (Blood Sugar)", ref: "70 - 100", unit: "mg/dL", category: "BMP & CMP" },
       { test: "Calcium", ref: "8.5 - 10.5", unit: "mg/dL", category: "BMP & CMP" },
       { test: "Sodium", ref: "135 - 145", unit: "mEq/L", category: "BMP & CMP" },
@@ -1053,7 +1101,7 @@
       { test: "Blood Urea Nitrogen (BUN)", ref: "7 - 20", unit: "mg/dL", category: "BMP & CMP" },
       { test: "Creatinine", ref: "0.6 - 1.2", unit: "mg/dL", category: "BMP & CMP" },
       { test: "Uric Acid", ref: "3.5 - 7.2", unit: "mg/dL", category: "BMP & CMP" },
-      // 2. تحاليل وظائف الكبد (LFTs)
+      // 2. LFTs
       { test: "Alanine Aminotransferase (ALT)", ref: "7 - 56", unit: "U/L", category: "LFTs" },
       { test: "Aspartate Aminotransferase (AST)", ref: "10 - 40", unit: "U/L", category: "LFTs" },
       { test: "Alkaline Phosphatase (ALP)", ref: "44 - 147", unit: "U/L", category: "LFTs" },
@@ -1065,7 +1113,7 @@
       { test: "Globulin", ref: "2.0 - 3.5", unit: "g/dL", category: "LFTs" },
       { test: "Albumin/Globulin Ratio (A/G Ratio)", ref: "1.0 - 2.5", unit: "", category: "LFTs" },
       { test: "Gamma-Glutamyl Transferase (GGT)", ref: "9 - 48", unit: "U/L", category: "LFTs" },
-      // 3. تحاليل دهون الدم والقلب (Lipid Panel)
+      // 3. Lipid Panel
       { test: "Total Cholesterol", ref: "125 - 200", unit: "mg/dL", category: "Lipid Panel" },
       { test: "Low-Density Lipoprotein (LDL)", ref: "0 - 100", unit: "mg/dL", category: "Lipid Panel" },
       { test: "High-Density Lipoprotein (HDL)", ref: "40 - 60", unit: "mg/dL", category: "Lipid Panel" },
@@ -1074,7 +1122,7 @@
       { test: "Apolipoprotein A1", ref: "120 - 180", unit: "mg/dL", category: "Lipid Panel" },
       { test: "Apolipoprotein B", ref: "55 - 135", unit: "mg/dL", category: "Lipid Panel" },
       { test: "Lipoprotein(a)", ref: "< 30", unit: "mg/dL", category: "Lipid Panel" },
-      // 4. تحاليل وظائف الغدة الدرقية
+      // 4. Thyroid
       { test: "Thyroid-Stimulating Hormone (TSH)", ref: "0.4 - 4.0", unit: "mIU/L", category: "Thyroid" },
       { test: "Free Thyroxine (Free T4)", ref: "0.8 - 1.8", unit: "ng/dL", category: "Thyroid" },
       { test: "Free Triiodothyronine (Free T3)", ref: "2.3 - 4.2", unit: "pg/mL", category: "Thyroid" },
@@ -1084,24 +1132,24 @@
       { test: "Thyroglobulin", ref: "≤ 55", unit: "ng/mL", category: "Thyroid" },
       { test: "Anti-Thyroid Peroxidase (Anti-TPO) Antibodies", ref: "< 35", unit: "IU/mL", category: "Thyroid" },
       { test: "Anti-Thyroglobulin Antibodies", ref: "< 40", unit: "IU/mL", category: "Thyroid" },
-      // 5. تحاليل مرض السكري
+      // 5. Diabetes
       { test: "Fasting Blood Sugar (FBS)", ref: "70 - 100", unit: "mg/dL", category: "Diabetes" },
       { test: "Postprandial Blood Sugar (PPBS)", ref: "< 140", unit: "mg/dL", category: "Diabetes" },
       { test: "Hemoglobin A1c (HbA1c)", ref: "4 - 6", unit: "%", category: "Diabetes" },
       { test: "C-Peptide", ref: "0.5 - 2.0", unit: "ng/mL", category: "Diabetes" },
       { test: "Insulin", ref: "2 - 25", unit: "μU/mL", category: "Diabetes" },
-      // 6. تحاليل وظائف الكلى
+      // 6. Kidney
       { test: "Serum Creatinine", ref: "0.6 - 1.2", unit: "mg/dL", category: "Kidney" },
       { test: "Blood Urea Nitrogen (BUN)", ref: "7 - 20", unit: "mg/dL", category: "Kidney" },
       { test: "Uric Acid", ref: "3.5 - 7.2", unit: "mg/dL", category: "Kidney" },
       { test: "Estimated Glomerular Filtration Rate (eGFR)", ref: "≥ 90", unit: "mL/min/1.73m²", category: "Kidney" },
-      // 7. تحاليل الأملاح والمعادن (Electrolyte Panel)
+      // 7. Electrolytes
       { test: "Sodium", ref: "135 - 145", unit: "mEq/L", category: "Electrolytes" },
       { test: "Potassium", ref: "3.5 - 5.1", unit: "mEq/L", category: "Electrolytes" },
       { test: "Chloride", ref: "98 - 107", unit: "mEq/L", category: "Electrolytes" },
       { test: "Magnesium", ref: "1.7 - 2.2", unit: "mg/dL", category: "Electrolytes" },
       { test: "Phosphorus", ref: "2.5 - 4.5", unit: "mg/dL", category: "Electrolytes" },
-      // 8. تحاليل الحديد وفقر الدم
+      // 8. Iron/Anemia
       { test: "Serum Iron", ref: "50 - 170", unit: "µg/dL", category: "Iron/Anemia" },
       { test: "Total Iron-Binding Capacity (TIBC)", ref: "250 - 450", unit: "µg/dL", category: "Iron/Anemia" },
       { test: "Transferrin Saturation", ref: "20 - 50", unit: "%", category: "Iron/Anemia" },
@@ -1109,7 +1157,7 @@
       { test: "Haptoglobin", ref: "30 - 200", unit: "mg/dL", category: "Iron/Anemia" },
       { test: "Reticulocyte Count", ref: "0.5 - 2.5", unit: "%", category: "Iron/Anemia" },
       { test: "Soluble Transferrin Receptor", ref: "2.8 - 5.6", unit: "mg/L", category: "Iron/Anemia" },
-      // 9. تحاليل الالتهابات وأمراض المناعة الذاتية
+      // 9. Inflammation
       { test: "C-Reactive Protein (CRP)", ref: "< 3", unit: "mg/L", category: "Inflammation" },
       { test: "High-Sensitivity CRP (hs-CRP)", ref: "< 1", unit: "mg/L", category: "Inflammation" },
       { test: "Erythrocyte Sedimentation Rate (ESR)", ref: "0 - 20", unit: "mm/hr", category: "Inflammation" },
@@ -1118,14 +1166,14 @@
       { test: "Antinuclear Antibodies (ANA)", ref: "Negative", unit: "", category: "Inflammation" },
       { test: "Complement C3", ref: "90 - 180", unit: "mg/dL", category: "Inflammation" },
       { test: "Complement C4", ref: "10 - 40", unit: "mg/dL", category: "Inflammation" },
-      // 10. تحاليل التجلط (Coagulation Tests)
+      // 10. Coagulation
       { test: "Prothrombin Time (PT)", ref: "11 - 13.5", unit: "sec", category: "Coagulation" },
       { test: "International Normalized Ratio (INR)", ref: "0.8 - 1.2", unit: "", category: "Coagulation" },
       { test: "Activated Partial Thromboplastin Time (aPTT)", ref: "25 - 35", unit: "sec", category: "Coagulation" },
       { test: "Fibrinogen", ref: "200 - 400", unit: "mg/dL", category: "Coagulation" },
       { test: "D-Dimer", ref: "< 0.5", unit: "µg/mL", category: "Coagulation" },
       { test: "Von Willebrand Factor", ref: "50 - 150", unit: "IU/dL", category: "Coagulation" },
-      // 11. تحاليل الهرمونات
+      // 11. Hormones
       { test: "Testosterone (Total & Free)", ref: "300 - 1000", unit: "ng/dL", category: "Hormones" },
       { test: "Estrogen (Estradiol - E2)", ref: "15 - 350", unit: "pg/mL", category: "Hormones" },
       { test: "Progesterone", ref: "1 - 28", unit: "ng/mL", category: "Hormones" },
@@ -1138,7 +1186,7 @@
       { test: "Parathyroid Hormone (PTH)", ref: "10 - 65", unit: "pg/mL", category: "Hormones" },
       { test: "Anti-Müllerian Hormone (AMH)", ref: "1.5 - 8.0", unit: "ng/mL", category: "Hormones" },
       { test: "Insulin-Like Growth Factor 1 (IGF-1)", ref: "150 - 350", unit: "ng/mL", category: "Hormones" },
-      // 12. تحاليل الأمراض المعدية
+      // 12. Infectious
       { test: "Hepatitis B Surface Antigen (HBsAg)", ref: "Negative", unit: "", category: "Infectious" },
       { test: "Hepatitis B Surface Antibody (Anti-HBs)", ref: "≥ 10", unit: "mIU/mL", category: "Infectious" },
       { test: "Hepatitis B Core Antibody (Anti-HBc)", ref: "Negative", unit: "", category: "Infectious" },
@@ -1152,7 +1200,7 @@
       { test: "Toxoplasma IgG & IgM", ref: "Negative", unit: "", category: "Infectious" },
       { test: "Rubella IgG & IgM", ref: "Positive/Negative", unit: "", category: "Infectious" },
       { test: "Varicella-Zoster Virus (VZV) Antibodies", ref: "Positive", unit: "", category: "Infectious" },
-      // 13. تحاليل الفيتامينات والعناصر الغذائية
+      // 13. Vitamins
       { test: "Vitamin D (25-Hydroxy)", ref: "20 - 50", unit: "ng/mL", category: "Vitamins" },
       { test: "Vitamin B12", ref: "200 - 900", unit: "pg/mL", category: "Vitamins" },
       { test: "Folate (Vitamin B9)", ref: "3 - 17", unit: "ng/mL", category: "Vitamins" },
@@ -1160,7 +1208,7 @@
       { test: "Vitamin E", ref: "5.5 - 17", unit: "mg/L", category: "Vitamins" },
       { test: "Vitamin K", ref: "0.2 - 3.2", unit: "ng/mL", category: "Vitamins" },
       { test: "Vitamin C", ref: "0.4 - 2", unit: "mg/dL", category: "Vitamins" },
-      // 14. تحاليل دلالات الأورام (Tumor Markers)
+      // 14. Tumor Markers
       { test: "Prostate-Specific Antigen (PSA)", ref: "0 - 4", unit: "ng/mL", category: "Tumor Markers" },
       { test: "Alpha-Fetoprotein (AFP)", ref: "≤ 10", unit: "ng/mL", category: "Tumor Markers" },
       { test: "Carcinoembryonic Antigen (CEA)", ref: "≤ 5", unit: "ng/mL", category: "Tumor Markers" },
@@ -1171,7 +1219,7 @@
       { test: "Thyroglobulin", ref: "< 55", unit: "ng/mL", category: "Tumor Markers" },
       { test: "Neuron-Specific Enolase (NSE)", ref: "≤ 16.3", unit: "ng/mL", category: "Tumor Markers" },
       { test: "Lactate Dehydrogenase (LDH)", ref: "140 - 280", unit: "U/L", category: "Tumor Markers" },
-      // 15. تحاليل أخرى خاصة وجينية
+      // 15. Special/Genetic
       { test: "HLA-B27 (Autoimmune Conditions)", ref: "Negative", unit: "", category: "Special/Genetic" },
       { test: "Homocysteine (Heart Disease Risk)", ref: "5 - 15", unit: "µmol/L", category: "Special/Genetic" },
       { test: "Myoglobin", ref: "28 - 72", unit: "ng/mL", category: "Special/Genetic" },
