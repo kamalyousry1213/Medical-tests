@@ -6,21 +6,23 @@
   <title>أدوات المعمل - Kamal Yousry</title>
   <!-- Font Awesome للأيقونات -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts for modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* التنسيقات العامة */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Roboto', sans-serif;
       direction: rtl;
       margin: 0;
       padding: 0;
-      background-color: #f4f7f6;
+      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
       color: #333;
       line-height: 1.6;
     }
     h1 {
       text-align: center;
       margin-top: 20px;
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       color: #007bff;
     }
     .main-menu {
@@ -33,20 +35,20 @@
     }
     .tool-button {
       background-color: #fff;
-      border: 1px solid #ddd;
+      border: none;
       border-radius: 12px;
-      padding: 20px;
+      padding: 25px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .tool-button:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
     .tool-button i {
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: #007bff;
       margin-bottom: 10px;
     }
@@ -66,14 +68,15 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      padding: 10px;
     }
     .modal-content {
       background-color: #fff;
       border-radius: 12px;
-      padding: 20px;
-      width: 90%;
+      padding: 20px 30px;
+      width: 100%;
       max-width: 600px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
       animation: fadeIn 0.3s ease;
       max-height: 90vh;
       overflow-y: auto;
@@ -119,7 +122,7 @@
     label {
       display: block;
       margin-top: 15px;
-      font-weight: bold;
+      font-weight: 500;
       color: #555;
     }
     input, select {
@@ -129,6 +132,7 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
+      transition: border-color 0.3s ease;
     }
     input:focus, select:focus { border-color: #007bff; outline: none; }
     .output {
@@ -151,6 +155,13 @@
       border: 1px solid #ddd;
     }
     th { background-color: #f8f9fa; }
+    /* توقيع الموقع بشكل غير ملحوظ */
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -240,6 +251,8 @@
           <option value="mg">مليجرام (mg)</option>
           <option value="µg">ميكروجرام (µg)</option>
           <option value="ng">نانوجرام (ng)</option>
+          <option value="g/dL">جرام/ديسيلتر (g/dL)</option>
+          <option value="µg/dL">µg/dL</option>
           <option value="g/L">جرام/لتر (g/L)</option>
           <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
           <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
@@ -258,6 +271,8 @@
           <option value="mg">مليجرام (mg)</option>
           <option value="µg">ميكروجرام (µg)</option>
           <option value="ng">نانوجرام (ng)</option>
+          <option value="g/dL">جرام/ديسيلتر (g/dL)</option>
+          <option value="µg/dL">µg/dL</option>
           <option value="g/L">جرام/لتر (g/L)</option>
           <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
           <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
@@ -381,6 +396,10 @@
     </div>
   </div>
 
+  <footer>
+    &copy; 2025 - Kamal Yousry
+  </footer>
+
   <script>
     /* دوال إظهار وإخفاء النوافذ */
     function showModal(modalId) {
@@ -467,6 +486,8 @@
         mg: { g: 0.001, µg: 1000, ng: 1e6 },
         µg: { g: 1e-6, mg: 0.001, ng: 1000 },
         ng: { g: 1e-9, mg: 1e-6, µg: 0.001 },
+        'g/dL': { 'mg/dL': 10, 'µg/dL': 10000 },
+        'µg/dL': { 'g/dL': 0.0001, 'mg/dL': 0.1 },
         'g/L': { 'mg/dL': 100, 'µg/mL': 1000, 'mmol/L': 1, 'mEq/L': 1, '%': 0.1 },
         'mg/dL': { 'g/L': 0.01, 'µg/mL': 10, 'mmol/L': 0.01, 'mEq/L': 0.01, '%': 0.001 },
         'µg/mL': { 'g/L': 0.001, 'mg/dL': 0.1, 'mmol/L': 0.001, 'mEq/L': 0.001, '%': 0.0001 },
