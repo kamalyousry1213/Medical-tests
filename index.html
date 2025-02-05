@@ -3,612 +3,1080 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>أدوات المعمل - Kamal Yousry</title>
-  <!-- Font Awesome للأيقونات -->
+  <title>LabMate - رفيقك في المعمل</title>
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Fonts for modern look -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* التنسيقات العامة */
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #555;
+      --accent-color: #28a745;
+      --bg-gradient-start: rgba(224, 247, 250, 0.85);
+      --bg-gradient-end: rgba(241, 248, 233, 0.85);
+      --white: #fff;
+      --light-shadow: rgba(0, 0, 0, 0.1);
+      --medium-shadow: rgba(0, 0, 0, 0.2);
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Open Sans', 'Roboto', sans-serif;
       direction: rtl;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
-      color: #333;
+      background-image: 
+        linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)),
+        url('https://source.unsplash.com/1600x900/?modern-laboratory');
+      background-size: cover;
+      background-blend-mode: overlay;
+      color: var(--secondary-color);
       line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    h1 {
+    header, footer {
+      background: rgba(255, 255, 255, 0.95);
       text-align: center;
-      margin-top: 20px;
-      font-size: 2.8rem;
-      color: #007bff;
+      padding: 20px 30px;
     }
-    .main-menu {
+    header h1 {
+      margin: 10px 0;
+      font-size: 3rem;
+      color: var(--primary-color);
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    /* قائمة التنقل الكبيرة بتقسيم عمودين */
+    nav {
+      margin-top: 15px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .tool-button {
-      background-color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 25px;
+    nav a {
+      display: block;
+      text-decoration: none;
+      color: var(--secondary-color);
+      background: #f1f1f1;
+      padding: 10px;
+      border-radius: 4px;
       text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-weight: 600;
+      transition: background 0.3s, color 0.3s;
     }
-    .tool-button:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    nav a:hover, nav a.active {
+      background: var(--primary-color);
+      color: var(--white);
     }
-    .tool-button i {
-      font-size: 2.5rem;
-      color: #007bff;
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px var(--light-shadow);
+      width: 95%;
+    }
+    section { display: none; }
+    section.active { display: block; }
+    h2 { color: var(--primary-color); margin-top: 0; }
+    .description {
+      background: #f7f7f7;
+      border-left: 4px solid var(--primary-color);
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    /* تنسيق الحقول بحيث تعرض التسمية بالإنجليزية والترجمة بجانبها */
+    .field-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: center;
       margin-bottom: 10px;
     }
-    .tool-button span {
-      font-size: 1.2rem;
-      color: #555;
+    .field-group label {
+      font-weight: 600;
     }
-    /* تصميم النوافذ المنبثقة (المودال) */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 10px;
+    .field-group .eng {
+      text-align: right;
+      color: var(--primary-color);
     }
-    .modal-content {
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 20px 30px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      animation: fadeIn 0.3s ease;
-      max-height: 90vh;
-      overflow-y: auto;
+    .field-group .arb {
+      text-align: left;
+      color: var(--accent-color);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-    }
-    .modal-header h2 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: #007bff;
-    }
-    .modal-header button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #555;
-    }
-    .modal-header button:hover { color: #007bff; }
-    .modal-body { margin-bottom: 20px; }
-    .modal-footer { text-align: center; }
-    .modal-footer button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
-    .modal-footer button:hover { background-color: #0056b3; }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 500;
-      color: #555;
-    }
-    input, select {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 1rem;
       transition: border-color 0.3s ease;
     }
-    input:focus, select:focus { border-color: #007bff; outline: none; }
-    .output {
-      font-weight: bold;
-      margin-top: 20px;
-      color: #007bff;
-      font-size: 1.2rem;
+    input:focus, select:focus { border-color: var(--primary-color); outline: none; }
+    button {
+      background: var(--primary-color);
+      color: var(--white);
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s;
     }
-    .normal { color: green; }
-    .borderline { color: orange; }
-    .high { color: red; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-    th { background-color: #f8f9fa; }
-    /* توقيع الموقع بشكل غير ملحوظ */
-    footer {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #aaa;
-      margin: 20px 0;
+    button:hover { background: #0056b3; }
+    .output { font-weight: bold; margin-top: 10px; color: var(--primary-color); font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+    th { background: #f8f9fa; }
+    footer { font-size: 0.9rem; color: #777; }
+    @media (max-width: 600px) {
+      header h1 { font-size: 2.3rem; }
+      nav { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <h1>أدوات المعمل الاحترافية 🛠️</h1>
-
-  <!-- القائمة الرئيسية -->
-  <div class="main-menu">
-    <div class="tool-button" onclick="showModal('absorptionModal')">
-      <i class="fas fa-chart-line"></i>
-      <span>حساب الامتصاص</span>
-    </div>
-    <div class="tool-button" onclick="showModal('unitConverterModal')">
-      <i class="fas fa-exchange-alt"></i>
-      <span>تحويل الوحدات</span>
-    </div>
-    <div class="tool-button" onclick="showModal('dilutionModal')">
-      <i class="fas fa-flask"></i>
-      <span>حساب التخفيفات</span>
-    </div>
-    <div class="tool-button" onclick="showModal('reagentRatioModal')">
-      <i class="fas fa-vial"></i>
-      <span>حساب نسب الرياجينتات</span>
-    </div>
-    <div class="tool-button" onclick="showModal('ldlModal')">
-      <i class="fas fa-heart"></i>
-      <span>حساب LDL</span>
-    </div>
-    <div class="tool-button" onclick="showModal('egfrModal')">
-      <i class="fas fa-kidneys"></i>
-      <span>حساب eGFR</span>
-    </div>
-  </div>
-
-  <!-- نافذة حساب الامتصاص (Regression tool) -->
-  <div id="absorptionModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>حساب الامتصاص 🎯</h2>
-        <button onclick="hideModal('absorptionModal')">&times;</button>
+  <header>
+    <h1>LabMate - رفيقك في المعمل 🔬🚀</h1>
+    <nav>
+      <a href="#" data-target="home" class="active">الرئيسية</a>
+      <a href="#" data-target="absorption">Absorption<br><small>قيمة الامتصاص</small></a>
+      <a href="#" data-target="unitConverter">Unit Converter<br><small>محول الوحدات</small></a>
+      <a href="#" data-target="dilution">Dilution<br><small>حساب التخفيفات</small></a>
+      <a href="#" data-target="reagentRatio">Reagent Ratio<br><small>نسب الرياجينتات</small></a>
+      <a href="#" data-target="ldlRisk">LDL & Risk<br><small>الكوليسترول الضار والمخاطر</small></a>
+      <a href="#" data-target="egfr">eGFR<br><small>تقدير وظائف الكلى</small></a>
+      <a href="#" data-target="osmolality">Serum Osmolality<br><small>أوزمولية المصل</small></a>
+      <a href="#" data-target="homa">HOMA-IR<br><small>مؤشر حساسية الإنسولين</small></a>
+      <a href="#" data-target="bleedingRisk">Bleeding/Clotting Risk<br><small>خطر النزيف/التجلط</small></a>
+      <a href="#" data-target="ironAnemia">Iron Deficiency & Anemia<br><small>نقص الحديد والأنيميا</small></a>
+      <a href="#" data-target="globalRef">Global Ref Ranges<br><small>النطاقات المرجعية</small></a>
+    </nav>
+  </header>
+  
+  <main>
+    <!-- Home Section -->
+    <section id="home" class="active">
+      <h2>مرحباً بك في LabMate</h2>
+      <p class="description">
+        LabMate هو رفيقك في المعمل الذي يقدم لك مجموعة شاملة من الأدوات الحسابية لتسهيل أعمالك المخبرية. اختر الأداة المناسبة من القائمة.
+      </p>
+    </section>
+    
+    <!-- Absorption Tool -->
+    <section id="absorption">
+      <h2>Absorption Calculation</h2>
+      <p class="description">
+        تستخدم هذه الأداة تحليل الانحدار الخطي لحساب قيمة الامتصاص المطلوبة.
+      </p>
+      <div class="field-group">
+        <label class="eng">Absorption Value</label>
+        <label class="arb">قيمة الامتصاص</label>
       </div>
-      <div class="modal-body">
-        <label for="absorption">الامتصاص:</label>
-        <input type="number" step="0.0001" id="absorption" required>
-        <label for="result">النتيجة:</label>
-        <input type="number" step="0.01" id="result" required>
-        <button type="button" onclick="addData()">إضافة بيانات ➕</button>
-
-        <h3>البيانات المدخلة 📋</h3>
-        <table id="dataTable">
-          <thead>
-            <tr>
-              <th>الامتصاص</th>
-              <th>النتيجة</th>
-              <th>الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="dataList">
-            <!-- ستضاف البيانات هنا -->
-          </tbody>
-        </table>
-
-        <h3>حساب الامتصاص المطلوب 🧮</h3>
-        <label for="desiredResult">النتيجة المرغوبة:</label>
-        <input type="number" step="0.01" id="desiredResult" required>
-        <button type="button" onclick="calculateAbsorption()">احسب الامتصاص 🚀</button>
-        <p id="absorptionOutput" class="output"></p>
+      <input type="number" step="0.0001" id="absorptionVal" placeholder="Enter absorption value">
+      
+      <div class="field-group">
+        <label class="eng">Result</label>
+        <label class="arb">النتيجة</label>
       </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('absorptionModal')">إغلاق</button>
+      <input type="number" step="0.01" id="resultVal" placeholder="Enter result">
+      
+      <button onclick="addAbsorptionData()">Add Data / إضافة البيانات</button>
+      
+      <h3>Entered Data / البيانات المدخلة</h3>
+      <table id="absorptionTable">
+        <thead>
+          <tr>
+            <th>Absorption</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      
+      <div class="field-group">
+        <label class="eng">Desired Result</label>
+        <label class="arb">النتيجة المرغوبة</label>
       </div>
-    </div>
-  </div>
-
-  <!-- نافذة تحويل الوحدات -->
-  <div id="unitConverterModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>تحويل الوحدات 🔄</h2>
-        <button onclick="hideModal('unitConverterModal')">&times;</button>
+      <input type="number" step="0.01" id="desiredResult" placeholder="Enter desired result">
+      
+      <button onclick="calculateAbsorption()">Calculate Required Absorption / احسب الامتصاص المطلوب</button>
+      <p id="absorptionOutput" class="output"></p>
+    </section>
+    
+    <!-- Unit Converter Tool -->
+    <section id="unitConverter">
+      <h2>Unit Converter</h2>
+      <p class="description">
+        حوّل بين وحدات القياس المختلفة بسهولة.
+      </p>
+      <div class="field-group">
+        <label class="eng">Value</label>
+        <label class="arb">القيمة</label>
       </div>
-      <div class="modal-body">
-        <label for="unitValue">القيمة:</label>
-        <input type="number" id="unitValue" required>
-        <label for="unitFrom">من الوحدة:</label>
-        <select id="unitFrom">
-          <option value="g">جرام (g)</option>
-          <option value="mg">مليجرام (mg)</option>
-          <option value="µg">ميكروجرام (µg)</option>
-          <option value="ng">نانوجرام (ng)</option>
-          <option value="g/dL">جرام/ديسيلتر (g/dL)</option>
-          <option value="µg/dL">µg/dL</option>
-          <option value="g/L">جرام/لتر (g/L)</option>
-          <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
-          <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
-          <option value="mmol/L">ملي مول/لتر (mmol/L)</option>
-          <option value="mEq/L">ملي مكافئ/لتر (mEq/L)</option>
-          <option value="%">النسبة المئوية (%)</option>
-          <option value="µL">ميكرولتر (µL)</option>
-          <option value="mL">ملليلتر (mL)</option>
-          <option value="L">لتر (L)</option>
-          <option value="U/L">وحدة/لتر (U/L)</option>
-          <option value="IU/L">وحدة دولية/لتر (IU/L)</option>
+      <input type="number" id="unitValue" placeholder="Enter value">
+      
+      <div class="field-group">
+        <label class="eng">From Unit</label>
+        <label class="arb">من الوحدة</label>
+      </div>
+      <select id="unitFrom">
+        <!-- تشمل وحدات متعددة -->
+        <option value="g">g</option>
+        <option value="mg">mg</option>
+        <option value="µg">µg</option>
+        <option value="ng">ng</option>
+        <option value="mg/dL">mg/dL</option>
+        <option value="mmol/L">mmol/L</option>
+        <option value="µmol/L">µmol/L</option>
+        <option value="mIU/L">mIU/L</option>
+        <!-- المزيد حسب الحاجة -->
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">To Unit</label>
+        <label class="arb">إلى الوحدة</label>
+      </div>
+      <select id="unitTo">
+        <option value="g">g</option>
+        <option value="mg">mg</option>
+        <option value="µg">µg</option>
+        <option value="ng">ng</option>
+        <option value="mg/dL">mg/dL</option>
+        <option value="mmol/L">mmol/L</option>
+        <option value="µmol/L">µmol/L</option>
+        <option value="mIU/L">mIU/L</option>
+      </select>
+      
+      <button onclick="convertUnits()">Convert / تحويل</button>
+      <p id="unitOutput" class="output"></p>
+    </section>
+    
+    <!-- Dilution Tool -->
+    <section id="dilution">
+      <h2>Dilution Calculation</h2>
+      <p class="description">
+        أدخل نسبة التخفيف (Sample:Diluent) والحجم الإجمالي.
+      </p>
+      <div class="field-group">
+        <label class="eng">Dilution Ratio (e.g., 1:10)</label>
+        <label class="arb">نسبة التخفيف (مثال: 1:10)</label>
+      </div>
+      <input type="text" id="dilutionRatio" placeholder="Enter dilution ratio">
+      
+      <div class="field-group">
+        <label class="eng">Total Volume (µL)</label>
+        <label class="arb">الحجم الإجمالي (µL)</label>
+      </div>
+      <input type="number" id="totalVolume" value="1000">
+      
+      <button onclick="calculateDilution()">Calculate Dilution / احسب التخفيف</button>
+      <p id="dilutionOutput" class="output"></p>
+    </section>
+    
+    <!-- Reagent Ratio Tool -->
+    <section id="reagentRatio">
+      <h2>Reagent Ratio Calculation</h2>
+      <p class="description">
+        أدخل الكميات الأصلية وتعديل الكمية المطلوبة للرياجينت الأول لحساب الكمية الجديدة للرياجينت الثاني.
+      </p>
+      <div class="field-group">
+        <label class="eng">Original Reagent 1 (µL)</label>
+        <label class="arb">الكمية الأصلية للرياجينت الأول (µL)</label>
+      </div>
+      <input type="number" id="originalReagent1" placeholder="Enter original amount">
+      
+      <div class="field-group">
+        <label class="eng">Original Reagent 2 (µL)</label>
+        <label class="arb">الكمية الأصلية للرياجينت الثاني (µL)</label>
+      </div>
+      <input type="number" id="originalReagent2" placeholder="Enter original amount">
+      
+      <div class="field-group">
+        <label class="eng">New Reagent 1 (µL)</label>
+        <label class="arb">الكمية الجديدة للرياجينت الأول (µL)</label>
+      </div>
+      <input type="number" id="newReagent1" placeholder="Enter new amount">
+      
+      <button onclick="calculateReagentRatio()">Calculate New Ratio / احسب الكمية الجديدة</button>
+      <p id="reagentOutput" class="output"></p>
+    </section>
+    
+    <!-- LDL & Risk Tool -->
+    <section id="ldlRisk">
+      <h2>LDL & Risk Calculation</h2>
+      <p class="description">
+        أدخل القيم لحساب LDL باستخدام معادلة Friedewald وحساب مؤشرين تقديريين للمخاطر.
+      </p>
+      <div class="field-group">
+        <label class="eng">Total Cholesterol</label>
+        <label class="arb">الكوليسترول الكلي</label>
+      </div>
+      <input type="number" id="totalCholesterol" placeholder="e.g., 200">
+      
+      <div class="field-group">
+        <label class="eng">HDL</label>
+        <label class="arb">HDL (الكوليسترول الجيد)</label>
+      </div>
+      <input type="number" id="hdl" placeholder="e.g., 50">
+      
+      <div class="field-group">
+        <label class="eng">Triglycerides</label>
+        <label class="arb">الدهون الثلاثية</label>
+      </div>
+      <input type="number" id="triglycerides" placeholder="e.g., 150">
+      
+      <div class="field-group">
+        <label class="eng">Select Units</label>
+        <label class="arb">اختر الوحدات</label>
+      </div>
+      <div class="field-group">
+        <select id="cholUnit">
+          <option value="mg/dL" selected>mg/dL</option>
+          <option value="mmol/L">mmol/L</option>
         </select>
-        <label for="unitTo">إلى الوحدة:</label>
-        <select id="unitTo">
-          <option value="g">جرام (g)</option>
-          <option value="mg">مليجرام (mg)</option>
-          <option value="µg">ميكروجرام (µg)</option>
-          <option value="ng">نانوجرام (ng)</option>
-          <option value="g/dL">جرام/ديسيلتر (g/dL)</option>
-          <option value="µg/dL">µg/dL</option>
-          <option value="g/L">جرام/لتر (g/L)</option>
-          <option value="mg/dL">مليجرام/ديسيلتر (mg/dL)</option>
-          <option value="µg/mL">ميكروجرام/ملليلتر (µg/mL)</option>
-          <option value="mmol/L">ملي مول/لتر (mmol/L)</option>
-          <option value="mEq/L">ملي مكافئ/لتر (mEq/L)</option>
-          <option value="%">النسبة المئوية (%)</option>
-          <option value="µL">ميكرولتر (µL)</option>
-          <option value="mL">ملليلتر (mL)</option>
-          <option value="L">لتر (L)</option>
-          <option value="U/L">وحدة/لتر (U/L)</option>
-          <option value="IU/L">وحدة دولية/لتر (IU/L)</option>
+        <select id="hdlUnit">
+          <option value="mg/dL" selected>mg/dL</option>
+          <option value="mmol/L">mmol/L</option>
         </select>
-        <button type="button" onclick="convertUnits()">تحويل 🔄</button>
-        <p id="unitOutput" class="output"></p>
-      </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('unitConverterModal')">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة حساب التخفيفات -->
-  <div id="dilutionModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>حساب التخفيفات 🧪</h2>
-        <button onclick="hideModal('dilutionModal')">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label for="dilutionRatio">نسبة التخفيف (مثل 1:10):</label>
-        <input type="text" id="dilutionRatio" placeholder="1:10" required>
-        <button type="button" onclick="calculateDilution()">احسب التخفيف 🧪</button>
-        <p id="dilutionOutput" class="output"></p>
-      </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('dilutionModal')">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة حساب نسب الرياجينتات -->
-  <div id="reagentRatioModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>حساب نسب الرياجينتات ⚗️</h2>
-        <button onclick="hideModal('reagentRatioModal')">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label for="originalReagent1">الكمية الأصلية للرياجينت الأول (µL):</label>
-        <input type="number" id="originalReagent1" required>
-        <label for="originalReagent2">الكمية الأصلية للرياجينت الثاني (µL):</label>
-        <input type="number" id="originalReagent2" required>
-        <label for="newReagent1">الكمية الجديدة للرياجينت الأول (µL):</label>
-        <input type="number" id="newReagent1" required>
-        <button type="button" onclick="calculateReagentRatio()">احسب الكمية الجديدة ⚗️</button>
-        <p id="reagentOutput" class="output"></p>
-      </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('reagentRatioModal')">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة حساب LDL -->
-  <div id="ldlModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>حساب LDL 💓</h2>
-        <button onclick="hideModal('ldlModal')">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label>الكوليسترول الكلي (mg/dL):</label>
-        <input type="number" id="totalCholesterol" required>
-        <label>HDL (mg/dL):</label>
-        <input type="number" id="hdl" required>
-        <label>الدهون الثلاثية (mg/dL):</label>
-        <input type="number" id="triglycerides" required>
-        <button type="button" onclick="calculateLDLTool()">احسب LDL</button>
-        <p id="ldlResult" class="output"></p>
-        <p id="trigAlert" class="output"></p>
-      </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('ldlModal')">إغلاق</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة حساب eGFR -->
-  <div id="egfrModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>حساب eGFR 🩺</h2>
-        <button onclick="hideModal('egfrModal')">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label>الكرياتينين:</label>
-        <input type="number" step="0.01" id="creatinineVal" required>
-        <label>الوحدة:</label>
-        <select id="creatinineUnit">
-          <option value="mg/dL">mg/dL</option>
-          <option value="µmol/L">µmol/L</option>
+        <select id="trigUnit">
+          <option value="mg/dL" selected>mg/dL</option>
+          <option value="mmol/L">mmol/L</option>
         </select>
-        <label>العمر (years):</label>
-        <input type="number" id="ageVal" required>
-        <label>العرق:</label>
-        <select id="race">
-          <option value="other">Other</option>
-          <option value="AA">African American</option>
-        </select>
-        <label>الجنس:</label>
-        <select id="genderVal">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-        <button type="button" onclick="calculateEGFRTool()">احسب eGFR</button>
-        <p id="egfrResultTool" class="output"></p>
       </div>
-      <div class="modal-footer">
-        <button onclick="hideModal('egfrModal')">إغلاق</button>
+      
+      <button onclick="calculateLDLTool()">Calculate LDL & Risk / احسب LDL والمخاطر</button>
+      <p id="ldlResult" class="output"></p>
+      <p id="riskOutput" class="output"></p>
+    </section>
+    
+    <!-- eGFR Tool -->
+    <section id="egfr">
+      <h2>eGFR Calculation</h2>
+      <p class="description">
+        احسب قيمة eGFR باستخدام معادلة MDRD. اختر الوحدة المناسبة للكرياتينين.
+      </p>
+      <div class="field-group">
+        <label class="eng">Creatinine</label>
+        <label class="arb">الكرياتينين</label>
       </div>
-    </div>
-  </div>
-
+      <input type="number" step="0.01" id="creatinineVal" placeholder="Enter creatinine">
+      
+      <div class="field-group">
+        <label class="eng">Select Unit</label>
+        <label class="arb">اختر الوحدة</label>
+      </div>
+      <select id="creatinineUnit">
+        <option value="mg/dL" selected>mg/dL</option>
+        <option value="µmol/L">µmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Age (years)</label>
+        <label class="arb">العمر (سنوات)</label>
+      </div>
+      <input type="number" step="0.1" id="ageVal" placeholder="Enter age">
+      
+      <div class="field-group">
+        <label class="eng">Race</label>
+        <label class="arb">العرق</label>
+      </div>
+      <select id="race">
+        <option value="other" selected>Other / آخر</option>
+        <option value="AA">African American / أمريكي أفريقي</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Gender</label>
+        <label class="arb">الجنس</label>
+      </div>
+      <select id="genderVal">
+        <option value="male" selected>Male / ذكر</option>
+        <option value="female">Female / أنثى</option>
+      </select>
+      
+      <button onclick="calculateEGFRTool()">Calculate eGFR / احسب eGFR</button>
+      <p id="egfrResultTool" class="output"></p>
+    </section>
+    
+    <!-- Serum Osmolality Tool -->
+    <section id="osmolality">
+      <h2>Serum Osmolality Calculation</h2>
+      <p class="description">
+        أدخل القيم التالية مع اختيار الوحدة لكل معطى، ثم احسب أوزمولية المصل باستخدام الصيغة:
+        <br>
+        <em>Osmolality = 2 × (Na + K) + (Glucose/18) + (BUN/2.8)</em>
+      </p>
+      <div class="field-group">
+        <label class="eng">Sodium</label>
+        <label class="arb">الصوديوم</label>
+      </div>
+      <input type="number" id="sodium" placeholder="Enter sodium">
+      <select id="sodiumUnit">
+        <option value="mEq/L" selected>mEq/L</option>
+        <option value="mmol/L">mmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Potassium</label>
+        <label class="arb">البوتاسيوم</label>
+      </div>
+      <input type="number" id="potassium" placeholder="Enter potassium">
+      <select id="potassiumUnit">
+        <option value="mEq/L" selected>mEq/L</option>
+        <option value="mmol/L">mmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Glucose</label>
+        <label class="arb">الجلوكوز</label>
+      </div>
+      <input type="number" id="glucose" placeholder="Enter glucose">
+      <select id="glucoseUnit">
+        <option value="mg/dL" selected>mg/dL</option>
+        <option value="mmol/L">mmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">BUN</label>
+        <label class="arb">اليوريا (BUN)</label>
+      </div>
+      <input type="number" id="bun" placeholder="Enter BUN">
+      <select id="bunUnit">
+        <option value="mg/dL" selected>mg/dL</option>
+        <option value="mmol/L">mmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Output Unit</label>
+        <label class="arb">وحدة الناتج</label>
+      </div>
+      <select id="osmolalityUnit">
+        <option value="mOsm/kg" selected>mOsm/kg</option>
+        <option value="mOsm/L">mOsm/L</option>
+      </select>
+      
+      <button onclick="calculateOsmolality()">Calculate Osmolality / احسب الأوزمولية</button>
+      <p id="osmolalityOutput" class="output"></p>
+    </section>
+    
+    <!-- HOMA-IR Tool -->
+    <section id="homa">
+      <h2>HOMA-IR Calculation</h2>
+      <p class="description">
+        أدخل Glucose و Insulin مع اختيار الوحدات لكل منهما، ثم احسب HOMA-IR.
+        <br>
+        <em>HOMA-IR = (Glucose × Insulin) / 405</em>
+      </p>
+      <div class="field-group">
+        <label class="eng">Glucose</label>
+        <label class="arb">السكر</label>
+      </div>
+      <input type="number" id="homaGlucose" placeholder="Enter glucose">
+      <select id="homaGlucoseUnit">
+        <option value="mg/dL" selected>mg/dL</option>
+        <option value="mmol/L">mmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Insulin</label>
+        <label class="arb">الأنسولين</label>
+      </div>
+      <input type="number" id="homaInsulin" placeholder="Enter insulin">
+      <select id="homaInsulinUnit">
+        <option value="μU/mL" selected>μU/mL</option>
+      </select>
+      
+      <button onclick="calculateHOMA()">Calculate HOMA-IR / احسب HOMA-IR</button>
+      <p id="homaOutput" class="output"></p>
+    </section>
+    
+    <!-- Bleeding/Clotting Risk Tool -->
+    <section id="bleedingRisk">
+      <h2>Bleeding/Clotting Risk Calculation</h2>
+      <p class="description">
+        أدخل قيم PT و PTT و INR مع اختيار الوحدات، ثم احسب مؤشر خطر النزيف/التجلط.
+      </p>
+      <div class="field-group">
+        <label class="eng">PT</label>
+        <label class="arb">زمن البروثرومبين</label>
+      </div>
+      <input type="number" id="pt" placeholder="Enter PT">
+      <select id="ptUnit">
+        <option value="sec" selected>sec</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">PTT</label>
+        <label class="arb">زمن التخثر الجزئي</label>
+      </div>
+      <input type="number" id="ptt" placeholder="Enter PTT">
+      <select id="pttUnit">
+        <option value="sec" selected>sec</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">INR</label>
+        <label class="arb">النسبة الدولية (INR)</label>
+      </div>
+      <input type="number" step="0.01" id="inr" placeholder="Enter INR">
+      
+      <button onclick="calculateBleedingRisk()">Calculate Risk / احسب مؤشر الخطر</button>
+      <p id="bleedingRiskOutput" class="output"></p>
+    </section>
+    
+    <!-- Iron Deficiency & Anemia Tool -->
+    <section id="ironAnemia">
+      <h2>Iron Deficiency & Anemia Calculation</h2>
+      <p class="description">
+        أدخل القيم التالية مع اختيار الوحدات لكل معطى لحساب Transferrin Saturation وتقدير احتمالية نقص الحديد.
+      </p>
+      <div class="field-group">
+        <label class="eng">Ferritin</label>
+        <label class="arb">الفيريتين</label>
+      </div>
+      <input type="number" id="ferritin" placeholder="Enter ferritin">
+      <select id="ferritinUnit">
+        <option value="ng/mL" selected>ng/mL</option>
+        <option value="µg/L">µg/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">Serum Iron</label>
+        <label class="arb">نسبة الحديد في المصل</label>
+      </div>
+      <input type="number" id="serumIron" placeholder="Enter serum iron">
+      <select id="serumIronUnit">
+        <option value="µg/dL" selected>µg/dL</option>
+        <option value="µmol/L">µmol/L</option>
+      </select>
+      
+      <div class="field-group">
+        <label class="eng">TIBC</label>
+        <label class="arb">السعة الكلية لربط الحديد</label>
+      </div>
+      <input type="number" id="tibc" placeholder="Enter TIBC">
+      <select id="tibcUnit">
+        <option value="µg/dL" selected>µg/dL</option>
+        <option value="µmol/L">µmol/L</option>
+      </select>
+      
+      <button onclick="calculateIronDeficiency()">Calculate Iron Deficiency / احسب النسبة</button>
+      <p id="ironOutput" class="output"></p>
+    </section>
+    
+    <!-- Global Reference Ranges Tool -->
+    <section id="globalRef">
+      <h2>Global Reference Ranges</h2>
+      <p class="description">
+        هنا قائمة شاملة من التحاليل الشائعة مع نطاقاتها الطبيعية. يمكنك تعديل النطاقات وحفظها ليتناسب مع معايير مختبرك.
+      </p>
+      <button id="editRefBtn" onclick="toggleEditRefs()">Edit / تعديل</button>
+      <button id="saveRefBtn" onclick="saveRefs()" style="display:none;">Save / حفظ</button>
+      <button id="resetRefBtn" onclick="resetRefs()" style="display:none;">Reset Default / إعادة التعيين</button>
+      <br>
+      <label class="field-group">
+        <span class="eng">Search Test</span>
+        <span class="arb">ابحث عن التحليل</span>
+      </label>
+      <input type="text" id="searchTest" onkeyup="filterRefs()" placeholder="Enter test name...">
+      <table id="refTable">
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Default Range</th>
+            <th>Unit</th>
+            <th>Editable Range</th>
+          </tr>
+        </thead>
+        <tbody id="refTableBody">
+          <!-- سيتم تعبئتها ديناميكياً -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+  
   <footer>
     &copy; 2025 - Kamal Yousry
   </footer>
-
+  
   <script>
-    /* دوال إظهار وإخفاء النوافذ */
-    function showModal(modalId) {
-      document.getElementById(modalId).style.display = 'flex';
-    }
-    function hideModal(modalId) {
-      document.getElementById(modalId).style.display = 'none';
-    }
-
-    /* --- أداة حساب الامتصاص باستخدام الانحدار الخطي --- */
-    let data = [];
-    function addData() {
-      const absorption = parseFloat(document.getElementById('absorption').value);
-      const result = parseFloat(document.getElementById('result').value);
-      if (isNaN(absorption) || isNaN(result)) {
-        alert("يرجى إدخال قيم صحيحة!");
+    /************** Navigation **************/
+    const navLinks = document.querySelectorAll("nav a");
+    const sections = document.querySelectorAll("main section");
+    navLinks.forEach(link => {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        navLinks.forEach(l => l.classList.remove("active"));
+        this.classList.add("active");
+        sections.forEach(sec => sec.classList.remove("active"));
+        const target = this.getAttribute("data-target");
+        document.getElementById(target).classList.add("active");
+        window.scrollTo(0, 0);
+      });
+    });
+    
+    /************** Absorption Tool **************/
+    let absorptionData = [];
+    function addAbsorptionData() {
+      const absorptionVal = parseFloat(document.getElementById("absorptionVal").value);
+      const resultVal = parseFloat(document.getElementById("resultVal").value);
+      if(isNaN(absorptionVal) || isNaN(resultVal)) {
+        alert("Please enter valid values.");
         return;
       }
-      data.push({ x: absorption, y: result });
-      renderTable();
-      document.getElementById('absorption').value = '';
-      document.getElementById('result').value = '';
-      alert("تمت إضافة البيانات بنجاح!");
+      absorptionData.push({ x: absorptionVal, y: resultVal });
+      renderAbsorptionTable();
+      document.getElementById("absorptionVal").value = "";
+      document.getElementById("resultVal").value = "";
     }
-    function renderTable() {
-      const dataList = document.getElementById('dataList');
-      dataList.innerHTML = '';
-      data.forEach((point, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${point.x.toFixed(4)}</td>
-          <td>${point.y.toFixed(2)}</td>
-          <td><button onclick="deleteData(${index})">حذف 🗑️</button></td>
-        `;
-        dataList.appendChild(row);
+    function renderAbsorptionTable() {
+      const tbody = document.querySelector("#absorptionTable tbody");
+      tbody.innerHTML = "";
+      absorptionData.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${item.x.toFixed(4)}</td><td>${item.y.toFixed(2)}</td>`;
+        tbody.appendChild(row);
       });
-    }
-    function deleteData(index) {
-      data.splice(index, 1);
-      renderTable();
-      alert("تم حذف البيانات بنجاح!");
-    }
-    function calculateRegression() {
-      const n = data.length;
-      if (n < 2) {
-        alert("يجب إدخال على الأقل نقطتين من البيانات!");
-        return null;
-      }
-      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-      data.forEach(point => {
-        sumX += point.x;
-        sumY += point.y;
-        sumXY += point.x * point.y;
-        sumX2 += point.x * point.x;
-      });
-      const a = (n * sumXY - sumX * sumY) / (n * sumX2 - Math.pow(sumX, 2));
-      const b = (sumY - a * sumX) / n;
-      return { a, b };
     }
     function calculateAbsorption() {
-      const desiredResult = parseFloat(document.getElementById('desiredResult').value);
-      if (isNaN(desiredResult)) {
-        alert("يرجى إدخال نتيجة مرغوبة صحيحة!");
+      const desired = parseFloat(document.getElementById("desiredResult").value);
+      if(isNaN(desired) || absorptionData.length < 2) {
+        alert("Please enter a valid desired result and at least two data points.");
         return;
       }
-      const regression = calculateRegression();
-      if (!regression) return;
-      const { a, b } = regression;
-      const requiredAbsorption = (desiredResult - b) / a;
-      document.getElementById('absorptionOutput').textContent = `الامتصاص المطلوب: ${requiredAbsorption.toFixed(4)} 🎉`;
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+      absorptionData.forEach(pt => {
+        sumX += pt.x;
+        sumY += pt.y;
+        sumXY += pt.x * pt.y;
+        sumX2 += pt.x * pt.x;
+      });
+      const n = absorptionData.length;
+      const a = (n * sumXY - sumX * sumY) / (n * sumX2 - Math.pow(sumX,2));
+      const b = (sumY - a * sumX) / n;
+      const required = (desired - b) / a;
+      document.getElementById("absorptionOutput").textContent = `Required Absorption: ${required.toFixed(4)}`;
     }
-
-    /* --- أداة تحويل الوحدات --- */
+    
+    /************** Unit Converter **************/
     function convertUnits() {
-      const unitValue = parseFloat(document.getElementById('unitValue').value);
-      const unitFrom = document.getElementById('unitFrom').value;
-      const unitTo = document.getElementById('unitTo').value;
-      if (isNaN(unitValue)) {
-        alert("يرجى إدخال قيمة صحيحة!");
+      const value = parseFloat(document.getElementById("unitValue").value);
+      const from = document.getElementById("unitFrom").value;
+      const to = document.getElementById("unitTo").value;
+      if(isNaN(value)) {
+        alert("Please enter a valid value.");
         return;
       }
-      const conversionFactors = {
+      // شمول تحويلات متعددة للكتل، التركيزات، الهرمونات، وغيرها
+      const factors = {
         g: { mg: 1000, µg: 1e6, ng: 1e9 },
         mg: { g: 0.001, µg: 1000, ng: 1e6 },
         µg: { g: 1e-6, mg: 0.001, ng: 1000 },
         ng: { g: 1e-9, mg: 1e-6, µg: 0.001 },
-        'g/dL': { 'mg/dL': 10, 'µg/dL': 10000 },
-        'µg/dL': { 'g/dL': 0.0001, 'mg/dL': 0.1 },
-        'g/L': { 'mg/dL': 100, 'µg/mL': 1000, 'mmol/L': 1, 'mEq/L': 1, '%': 0.1 },
-        'mg/dL': { 'g/L': 0.01, 'µg/mL': 10, 'mmol/L': 0.01, 'mEq/L': 0.01, '%': 0.001 },
-        'µg/mL': { 'g/L': 0.001, 'mg/dL': 0.1, 'mmol/L': 0.001, 'mEq/L': 0.001, '%': 0.0001 },
-        'mmol/L': { 'g/L': 1, 'mg/dL': 100, 'µg/mL': 1000, 'mEq/L': 1, '%': 0.1 },
-        'mEq/L': { 'g/L': 1, 'mg/dL': 100, 'µg/mL': 1000, 'mmol/L': 1, '%': 0.1 },
-        '%': { 'g/L': 10, 'mg/dL': 1000, 'µg/mL': 10000, 'mmol/L': 10, 'mEq/L': 10 },
-        µL: { mL: 0.001, L: 1e-6 },
-        mL: { µL: 1000, L: 0.001 },
-        L: { µL: 1e6, mL: 1000 },
-        'U/L': { 'IU/L': 1 },
-        'IU/L': { 'U/L': 1 }
+        "mg/dL": { "mmol/L": 0.0555, "µmol/L": 55.5 },
+        "mmol/L": { "mg/dL": 18, "µmol/L": 1000 },
+        "µmol/L": { "mg/dL": 0.018, "mmol/L": 0.001 },
+        "mIU/L": { "µIU/mL": 1 }  // غالباً تكون 1:1
       };
       let result;
-      if (unitFrom === unitTo) {
-        result = unitValue;
-      } else if (conversionFactors[unitFrom] && conversionFactors[unitFrom][unitTo]) {
-        result = unitValue * conversionFactors[unitFrom][unitTo];
-      } else {
-        alert("التحويل غير مدعوم بين الوحدات المحددة!");
+      if(from === to) result = value;
+      else if(factors[from] && factors[from][to])
+        result = value * factors[from][to];
+      else {
+        alert("Conversion not supported.");
         return;
       }
-      document.getElementById('unitOutput').textContent = `النتيجة: ${result.toFixed(4)} ${unitTo}`;
+      document.getElementById("unitOutput").textContent = `Result: ${result.toFixed(4)} ${to}`;
     }
-
-    /* --- أداة حساب التخفيفات --- */
+    
+    /************** Dilution Tool **************/
     function calculateDilution() {
-      const dilutionRatio = document.getElementById('dilutionRatio').value;
-      const [part1, part2] = dilutionRatio.split(':').map(Number);
-      if (isNaN(part1) || isNaN(part2) || part1 <= 0 || part2 <= 0) {
-        alert("يرجى إدخال نسبة تخفيف صحيحة!");
+      const ratioStr = document.getElementById("dilutionRatio").value;
+      const total = parseFloat(document.getElementById("totalVolume").value);
+      const parts = ratioStr.split(":").map(Number);
+      if(parts.length !== 2 || parts.some(isNaN) || total <= 0) {
+        alert("Please enter a valid dilution ratio and total volume.");
         return;
       }
-      const totalVolume = 1000; // حجم العينة 1000 µL
-      const sampleVolume = (totalVolume * part1) / (part1 + part2);
-      const diluentVolume = totalVolume - sampleVolume;
-      document.getElementById('dilutionOutput').textContent = `حجم العينة: ${sampleVolume.toFixed(2)} µL | حجم المحلول الملحي: ${diluentVolume.toFixed(2)} µL`;
+      const sample = total * (parts[0] / (parts[0] + parts[1]));
+      const diluent = total - sample;
+      document.getElementById("dilutionOutput").textContent = `Sample: ${sample.toFixed(2)} µL, Diluent: ${diluent.toFixed(2)} µL`;
     }
-
-    /* --- أداة حساب نسب الرياجينتات --- */
+    
+    /************** Reagent Ratio Tool **************/
     function calculateReagentRatio() {
-      const originalReagent1 = parseFloat(document.getElementById('originalReagent1').value);
-      const originalReagent2 = parseFloat(document.getElementById('originalReagent2').value);
-      const newReagent1 = parseFloat(document.getElementById('newReagent1').value);
-      if (isNaN(originalReagent1) || isNaN(originalReagent2) || isNaN(newReagent1) || originalReagent1 <= 0 || originalReagent2 <= 0 || newReagent1 <= 0) {
-        alert("يرجى إدخال قيم صحيحة!");
+      const r1 = parseFloat(document.getElementById("originalReagent1").value);
+      const r2 = parseFloat(document.getElementById("originalReagent2").value);
+      const newR1 = parseFloat(document.getElementById("newReagent1").value);
+      if(isNaN(r1) || isNaN(r2) || isNaN(newR1) || r1<=0 || r2<=0) {
+        alert("Please enter valid reagent amounts.");
         return;
       }
-      const ratio = originalReagent1 / originalReagent2;
-      const newReagent2 = newReagent1 / ratio;
-      document.getElementById('reagentOutput').textContent = `الكمية الجديدة للرياجينت الثاني: ${newReagent2.toFixed(2)} µL`;
+      const ratio = r1 / r2;
+      const newR2 = newR1 / ratio;
+      document.getElementById("reagentOutput").textContent = `New Reagent 2: ${newR2.toFixed(2)} µL`;
     }
-
-    /* --- أداة حساب LDL (معادلة Friedewald) --- */
+    
+    /************** LDL & Risk Tool **************/
     function calculateLDLTool() {
-      const totalCholesterol = parseFloat(document.getElementById('totalCholesterol').value);
-      const hdl = parseFloat(document.getElementById('hdl').value);
-      const triglycerides = parseFloat(document.getElementById('triglycerides').value);
-      const resultText = document.getElementById('ldlResult');
-      const trigAlert = document.getElementById('trigAlert');
-      if (!isNaN(totalCholesterol) && !isNaN(hdl) && !isNaN(triglycerides) && totalCholesterol > 0 && hdl > 0 && triglycerides > 0) {
-        if(triglycerides > 400) {
-          trigAlert.textContent = "تحذير: قيمة الدهون الثلاثية > 400 mg/dL، المعادلة قد لا تكون دقيقة!";
-        } else {
-          trigAlert.textContent = "";
-        }
-        const ldl = totalCholesterol - hdl - (triglycerides / 5);
-        let classification = "";
-        if (ldl < 100) {
-          classification = " (طبيعي)";
-          resultText.className = "output normal";
-        } else if (ldl < 160) {
-          classification = " (حدي)";
-          resultText.className = "output borderline";
-        } else {
-          classification = " (مرتفع)";
-          resultText.className = "output high";
-        }
-        resultText.textContent = `LDL: ${ldl.toFixed(2)} mg/dL${classification}`;
-      } else {
-        resultText.textContent = "يرجى إدخال جميع القيم بشكل صحيح.";
-        resultText.className = "output high";
+      let total = parseFloat(document.getElementById("totalCholesterol").value);
+      let hdl = parseFloat(document.getElementById("hdl").value);
+      let trig = parseFloat(document.getElementById("triglycerides").value);
+      const cholUnit = document.getElementById("cholUnit").value;
+      const hdlUnit = document.getElementById("hdlUnit").value;
+      const trigUnit = document.getElementById("trigUnit").value;
+      if(cholUnit === "mmol/L") total *= 38.67;
+      if(hdlUnit === "mmol/L") hdl *= 38.67;
+      if(trigUnit === "mmol/L") trig *= 88.57;
+      if(isNaN(total) || isNaN(hdl) || isNaN(trig) || total<=0 || hdl<=0 || trig<=0) {
+        alert("Please enter valid values.");
+        return;
       }
+      const ldl = total - hdl - (trig/5);
+      const risk1 = (ldl * 0.1).toFixed(2);
+      const risk2 = (ldl * 0.08).toFixed(2);
+      document.getElementById("ldlResult").textContent = `LDL: ${ldl.toFixed(2)} mg/dL`;
+      document.getElementById("riskOutput").textContent = `Risk 1: ${risk1} | Risk 2: ${risk2}`;
     }
-
-    /* --- أداة حساب eGFR (معادلة MDRD) --- */
+    
+    /************** eGFR Tool **************/
     function calculateEGFRTool() {
-      let creatinine = parseFloat(document.getElementById('creatinineVal').value);
-      const unit = document.getElementById('creatinineUnit').value;
-      if(unit === 'µmol/L') {
-        // تحويل µmol/L إلى mg/dL
-        creatinine = creatinine / 88.4;
+      let creatinine = parseFloat(document.getElementById("creatinineVal").value);
+      const unit = document.getElementById("creatinineUnit").value;
+      if(unit === "µmol/L") creatinine = creatinine / 88.4;
+      const age = parseFloat(document.getElementById("ageVal").value);
+      const race = document.getElementById("race").value;
+      const gender = document.getElementById("genderVal").value;
+      if(isNaN(creatinine) || isNaN(age) || creatinine<=0 || age<=0) {
+        alert("Please enter valid values.");
+        return;
       }
-      const age = parseInt(document.getElementById('ageVal').value);
-      const race = document.getElementById('race').value;
-      const gender = document.getElementById('genderVal').value;
-      const resultText = document.getElementById('egfrResultTool');
-      if (!isNaN(creatinine) && !isNaN(age) && creatinine > 0 && age > 0) {
-        let egfr = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
-        if(gender === 'female') {
-          egfr *= 0.742;
-        }
-        if(race === 'AA') {
-          egfr *= 1.212;
-        }
-        let classification = "";
-        if (egfr >= 90) {
-          classification = " (طبيعي)";
-          resultText.className = "output normal";
-        } else if (egfr >= 60) {
-          classification = " (انخفاض طفيف)";
-          resultText.className = "output borderline";
-        } else {
-          classification = " (انخفاض شديد - استشر الطبيب)";
-          resultText.className = "output high";
-        }
-        resultText.textContent = `eGFR: ${egfr.toFixed(2)} mL/min/1.73m²${classification}`;
+      let egfr = 175 * Math.pow(creatinine, -1.154) * Math.pow(age, -0.203);
+      if(gender==="female") egfr *= 0.742;
+      if(race==="AA") egfr *= 1.212;
+      let classification = "";
+      if(egfr>=90) classification = " (Normal)";
+      else if(egfr>=60) classification = " (Mildly decreased)";
+      else classification = " (Severely decreased - consult physician)";
+      document.getElementById("egfrResultTool").textContent = `eGFR: ${egfr.toFixed(2)} mL/min/1.73m²${classification}`;
+    }
+    
+    /************** Serum Osmolality Tool **************/
+    function calculateOsmolality() {
+      let sodium = parseFloat(document.getElementById("sodium").value);
+      let potassium = parseFloat(document.getElementById("potassium").value);
+      let glucose = parseFloat(document.getElementById("glucose").value);
+      let bun = parseFloat(document.getElementById("bun").value);
+      const glucoseUnit = document.getElementById("glucoseUnit").value;
+      const bunUnit = document.getElementById("bunUnit").value;
+      if(glucoseUnit==="mmol/L") glucose *= 18;
+      if(bunUnit==="mmol/L") bun *= 2.8;
+      if(isNaN(sodium) || isNaN(potassium) || isNaN(glucose) || isNaN(bun)) {
+        alert("Please enter all values correctly.");
+        return;
+      }
+      let osmolality = 2 * (sodium + potassium) + (glucose / 18) + (bun / 2.8);
+      const outUnit = document.getElementById("osmolalityUnit").value;
+      document.getElementById("osmolalityOutput").textContent = `Serum Osmolality: ${osmolality.toFixed(2)} ${outUnit}`;
+    }
+    
+    /************** HOMA-IR Tool **************/
+    function calculateHOMA() {
+      let glucose = parseFloat(document.getElementById("homaGlucose").value);
+      let insulin = parseFloat(document.getElementById("homaInsulin").value);
+      const glucoseUnit = document.getElementById("homaGlucoseUnit").value;
+      if(glucoseUnit==="mmol/L") glucose *= 18;
+      if(isNaN(glucose) || isNaN(insulin)) {
+        alert("Please enter valid values.");
+        return;
+      }
+      const homa = (glucose * insulin) / 405;
+      document.getElementById("homaOutput").textContent = `HOMA-IR: ${homa.toFixed(2)}`;
+    }
+    
+    /************** Bleeding/Clotting Risk Tool **************/
+    function calculateBleedingRisk() {
+      let pt = parseFloat(document.getElementById("pt").value);
+      let ptt = parseFloat(document.getElementById("ptt").value);
+      let inr = parseFloat(document.getElementById("inr").value);
+      if(isNaN(pt) || isNaN(ptt) || isNaN(inr)) {
+        alert("Please enter valid values.");
+        return;
+      }
+      const ptScore = (pt - 12.25) / 1.25;
+      const pttScore = (ptt - 30) / 5;
+      const inrScore = (inr - 1) / 0.2;
+      const riskIndex = (ptScore + pttScore + inrScore) / 3;
+      let riskMessage = "";
+      if(riskIndex < 0.5) riskMessage = "Low risk";
+      else if(riskIndex < 1) riskMessage = "Moderate risk";
+      else riskMessage = "High risk - consult physician";
+      document.getElementById("bleedingRiskOutput").textContent = `Risk Index: ${riskIndex.toFixed(2)} → ${riskMessage}`;
+    }
+    
+    /************** Iron Deficiency & Anemia Tool **************/
+    function calculateIronDeficiency() {
+      let ferritin = parseFloat(document.getElementById("ferritin").value);
+      let serumIron = parseFloat(document.getElementById("serumIron").value);
+      let tibc = parseFloat(document.getElementById("tibc").value);
+      if(isNaN(ferritin) || isNaN(serumIron) || isNaN(tibc) || tibc===0) {
+        alert("Please enter valid values.");
+        return;
+      }
+      const transferrinSat = (serumIron / tibc) * 100;
+      let probability = "";
+      if(ferritin < 15 && transferrinSat < 15)
+        probability = "High probability of iron deficiency";
+      else if(ferritin < 30 || transferrinSat < 20)
+        probability = "Moderate probability of iron deficiency";
+      else
+        probability = "Low probability of iron deficiency";
+      document.getElementById("ironOutput").textContent = `Transferrin Saturation: ${transferrinSat.toFixed(2)}% - ${probability}`;
+    }
+    
+    /************** Global Reference Ranges Tool **************/
+    // بيانات افتراضية شاملة بناءً على القائمة المطلوبة
+    const defaultRefs = [
+      // 1. Basic Metabolic Panel (BMP & CMP)
+      { test: "Glucose (Blood Sugar)", ref: "70 - 100", unit: "mg/dL", category: "BMP & CMP" },
+      { test: "Calcium", ref: "8.5 - 10.5", unit: "mg/dL", category: "BMP & CMP" },
+      { test: "Sodium", ref: "135 - 145", unit: "mEq/L", category: "BMP & CMP" },
+      { test: "Potassium", ref: "3.5 - 5.1", unit: "mEq/L", category: "BMP & CMP" },
+      { test: "Chloride", ref: "98 - 107", unit: "mEq/L", category: "BMP & CMP" },
+      { test: "Bicarbonate (Total CO2)", ref: "22 - 29", unit: "mEq/L", category: "BMP & CMP" },
+      { test: "Blood Urea Nitrogen (BUN)", ref: "7 - 20", unit: "mg/dL", category: "BMP & CMP" },
+      { test: "Creatinine", ref: "0.6 - 1.2", unit: "mg/dL", category: "BMP & CMP" },
+      { test: "Uric Acid", ref: "3.5 - 7.2", unit: "mg/dL", category: "BMP & CMP" },
+      // 2. Liver Function Tests (LFTs)
+      { test: "Alanine Aminotransferase (ALT)", ref: "7 - 56", unit: "U/L", category: "LFTs" },
+      { test: "Aspartate Aminotransferase (AST)", ref: "10 - 40", unit: "U/L", category: "LFTs" },
+      { test: "Alkaline Phosphatase (ALP)", ref: "44 - 147", unit: "U/L", category: "LFTs" },
+      { test: "Total Bilirubin", ref: "0.1 - 1.2", unit: "mg/dL", category: "LFTs" },
+      { test: "Direct Bilirubin", ref: "0 - 0.3", unit: "mg/dL", category: "LFTs" },
+      { test: "Indirect Bilirubin", ref: "0.2 - 0.8", unit: "mg/dL", category: "LFTs" },
+      { test: "Total Protein", ref: "6.0 - 8.3", unit: "g/dL", category: "LFTs" },
+      { test: "Albumin", ref: "3.4 - 5.4", unit: "g/dL", category: "LFTs" },
+      { test: "Globulin", ref: "2.0 - 3.5", unit: "g/dL", category: "LFTs" },
+      { test: "A/G Ratio", ref: "1.0 - 2.5", unit: "", category: "LFTs" },
+      { test: "Gamma-Glutamyl Transferase (GGT)", ref: "9 - 48", unit: "U/L", category: "LFTs" },
+      // 3. Lipid Panel
+      { test: "Total Cholesterol", ref: "125 - 200", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "LDL", ref: "0 - 100", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "HDL", ref: "40 - 60", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "Triglycerides", ref: "< 150", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "VLDL", ref: "5 - 40", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "Apolipoprotein A1", ref: "120 - 180", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "Apolipoprotein B", ref: "55 - 135", unit: "mg/dL", category: "Lipid Panel" },
+      { test: "Lipoprotein(a)", ref: "< 30", unit: "mg/dL", category: "Lipid Panel" },
+      // 4. Thyroid Function Tests
+      { test: "TSH", ref: "0.4 - 4.0", unit: "mIU/L", category: "Thyroid" },
+      { test: "Free T4", ref: "0.8 - 1.8", unit: "ng/dL", category: "Thyroid" },
+      { test: "Free T3", ref: "2.3 - 4.2", unit: "pg/mL", category: "Thyroid" },
+      { test: "Total T4", ref: "5.0 - 12.0", unit: "µg/dL", category: "Thyroid" },
+      { test: "Total T3", ref: "80 - 200", unit: "ng/dL", category: "Thyroid" },
+      { test: "Reverse T3", ref: "10 - 24", unit: "ng/dL", category: "Thyroid" },
+      { test: "Thyroglobulin", ref: "≤ 55", unit: "ng/mL", category: "Thyroid" },
+      { test: "Anti-TPO", ref: "< 35", unit: "IU/mL", category: "Thyroid" },
+      { test: "Anti-Thyroglobulin", ref: "< 40", unit: "IU/mL", category: "Thyroid" },
+      // 5. Diabetes
+      { test: "Fasting Blood Sugar (FBS)", ref: "70 - 100", unit: "mg/dL", category: "Diabetes" },
+      { test: "Postprandial Blood Sugar (PPBS)", ref: "< 140", unit: "mg/dL", category: "Diabetes" },
+      { test: "Hemoglobin A1c", ref: "4 - 6", unit: "%", category: "Diabetes" },
+      { test: "C-Peptide", ref: "0.5 - 2.0", unit: "ng/mL", category: "Diabetes" },
+      { test: "Insulin", ref: "2 - 25", unit: "μU/mL", category: "Diabetes" },
+      // 6. Kidney Function
+      { test: "Serum Creatinine", ref: "0.6 - 1.2", unit: "mg/dL", category: "Kidney" },
+      { test: "BUN", ref: "7 - 20", unit: "mg/dL", category: "Kidney" },
+      { test: "Uric Acid", ref: "3.5 - 7.2", unit: "mg/dL", category: "Kidney" },
+      { test: "eGFR", ref: "≥ 90", unit: "mL/min/1.73m²", category: "Kidney" },
+      // 7. Electrolyte Panel
+      { test: "Sodium", ref: "135 - 145", unit: "mEq/L", category: "Electrolytes" },
+      { test: "Potassium", ref: "3.5 - 5.1", unit: "mEq/L", category: "Electrolytes" },
+      { test: "Chloride", ref: "98 - 107", unit: "mEq/L", category: "Electrolytes" },
+      { test: "Magnesium", ref: "1.7 - 2.2", unit: "mg/dL", category: "Electrolytes" },
+      { test: "Phosphorus", ref: "2.5 - 4.5", unit: "mg/dL", category: "Electrolytes" },
+      // 8. Iron and Anemia
+      { test: "Serum Iron", ref: "50 - 170", unit: "µg/dL", category: "Iron/Anemia" },
+      { test: "TIBC", ref: "250 - 450", unit: "µg/dL", category: "Iron/Anemia" },
+      { test: "Transferrin Saturation", ref: "20 - 50", unit: "%", category: "Iron/Anemia" },
+      { test: "Ferritin", ref: "30 - 400", unit: "ng/mL", category: "Iron/Anemia" },
+      { test: "Haptoglobin", ref: "30 - 200", unit: "mg/dL", category: "Iron/Anemia" },
+      { test: "Reticulocyte Count", ref: "0.5 - 2.5", unit: "%", category: "Iron/Anemia" },
+      { test: "Soluble Transferrin Receptor", ref: "2.8 - 5.6", unit: "mg/L", category: "Iron/Anemia" },
+      // 9. Inflammation / Autoimmune
+      { test: "CRP", ref: "< 3", unit: "mg/L", category: "Inflammation" },
+      { test: "hs-CRP", ref: "< 1", unit: "mg/L", category: "Inflammation" },
+      { test: "ESR", ref: "0 - 20", unit: "mm/hr", category: "Inflammation" },
+      { test: "Rheumatoid Factor", ref: "< 20", unit: "IU/mL", category: "Inflammation" },
+      { test: "Anti-CCP", ref: "< 20", unit: "U/mL", category: "Inflammation" },
+      { test: "ANA", ref: "Negative", unit: "", category: "Inflammation" },
+      { test: "Complement C3", ref: "90 - 180", unit: "mg/dL", category: "Inflammation" },
+      { test: "Complement C4", ref: "10 - 40", unit: "mg/dL", category: "Inflammation" },
+      // 10. Coagulation Tests
+      { test: "PT", ref: "11 - 13.5", unit: "sec", category: "Coagulation" },
+      { test: "INR", ref: "0.8 - 1.2", unit: "", category: "Coagulation" },
+      { test: "aPTT", ref: "25 - 35", unit: "sec", category: "Coagulation" },
+      { test: "Fibrinogen", ref: "200 - 400", unit: "mg/dL", category: "Coagulation" },
+      { test: "D-Dimer", ref: "< 0.5", unit: "µg/mL", category: "Coagulation" },
+      { test: "Von Willebrand Factor", ref: "50 - 150", unit: "IU/dL", category: "Coagulation" },
+      // 11. Hormones
+      { test: "Testosterone (Total)", ref: "300 - 1000", unit: "ng/dL", category: "Hormones" },
+      { test: "Testosterone (Free)", ref: "5 - 21", unit: "ng/dL", category: "Hormones" },
+      { test: "Estrogen (Estradiol - E2)", ref: "15 - 350", unit: "pg/mL", category: "Hormones" },
+      { test: "Progesterone", ref: "1 - 28", unit: "ng/mL", category: "Hormones" },
+      { test: "LH", ref: "1.7 - 8.6", unit: "mIU/mL", category: "Hormones" },
+      { test: "FSH", ref: "1.5 - 12.4", unit: "mIU/mL", category: "Hormones" },
+      { test: "DHEA-S", ref: "35 - 430", unit: "µg/dL", category: "Hormones" },
+      { test: "Cortisol", ref: "6 - 23", unit: "μg/dL", category: "Hormones" },
+      { test: "Prolactin", ref: "4 - 15", unit: "ng/mL", category: "Hormones" },
+      { test: "Growth Hormone", ref: "0 - 10", unit: "ng/mL", category: "Hormones" },
+      { test: "PTH", ref: "10 - 65", unit: "pg/mL", category: "Hormones" },
+      { test: "Anti-Müllerian Hormone", ref: "1.5 - 8.0", unit: "ng/mL", category: "Hormones" },
+      { test: "IGF-1", ref: "150 - 350", unit: "ng/mL", category: "Hormones" },
+      // 12. Infectious Diseases
+      { test: "HBsAg", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "Anti-HBs", ref: "≥ 10", unit: "mIU/mL", category: "Infectious" },
+      { test: "Anti-HBc", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "Anti-HCV", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "HIV Antibody", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "HIV RNA", ref: "Undetectable", unit: "copies/mL", category: "Infectious" },
+      { test: "Syphilis (VDRL/RPR)", ref: "Non-reactive", unit: "", category: "Infectious" },
+      { test: "EBV", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "CMV Antibody", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "Quantiferon-TB Gold", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "Toxoplasma IgG & IgM", ref: "Negative", unit: "", category: "Infectious" },
+      { test: "Rubella IgG & IgM", ref: "Positive/Negative", unit: "", category: "Infectious" },
+      { test: "VZV Antibodies", ref: "Positive", unit: "", category: "Infectious" },
+      // 13. Vitamins & Nutrition
+      { test: "Vitamin D (25-Hydroxy)", ref: "20 - 50", unit: "ng/mL", category: "Vitamins" },
+      { test: "Vitamin B12", ref: "200 - 900", unit: "pg/mL", category: "Vitamins" },
+      { test: "Folate (Vitamin B9)", ref: "3 - 17", unit: "ng/mL", category: "Vitamins" },
+      { test: "Vitamin A", ref: "20 - 60", unit: "µg/dL", category: "Vitamins" },
+      { test: "Vitamin E", ref: "5.5 - 17", unit: "mg/L", category: "Vitamins" },
+      { test: "Vitamin K", ref: "0.2 - 3.2", unit: "ng/mL", category: "Vitamins" },
+      { test: "Vitamin C", ref: "0.4 - 2", unit: "mg/dL", category: "Vitamins" },
+      // 14. Tumor Markers
+      { test: "PSA", ref: "0 - 4", unit: "ng/mL", category: "Tumor Markers" },
+      { test: "AFP", ref: "≤ 10", unit: "ng/mL", category: "Tumor Markers" },
+      { test: "CEA", ref: "≤ 5", unit: "ng/mL", category: "Tumor Markers" },
+      { test: "CA-125", ref: "< 35", unit: "U/mL", category: "Tumor Markers" },
+      { test: "CA 19-9", ref: "< 37", unit: "U/mL", category: "Tumor Markers" },
+      { test: "CA 15-3", ref: "≤ 30", unit: "U/mL", category: "Tumor Markers" },
+      { test: "Beta-hCG", ref: "< 5", unit: "mIU/mL", category: "Tumor Markers" },
+      { test: "Thyroglobulin", ref: "< 55", unit: "ng/mL", category: "Tumor Markers" },
+      { test: "NSE", ref: "≤ 16.3", unit: "ng/mL", category: "Tumor Markers" },
+      { test: "LDH", ref: "140 - 280", unit: "U/L", category: "Tumor Markers" },
+      // 15. Genetic/Other
+      { test: "HLA-B27", ref: "Negative", unit: "", category: "Genetic/Other" },
+      { test: "Homocysteine", ref: "5 - 15", unit: "µmol/L", category: "Genetic/Other" },
+      { test: "Myoglobin", ref: "28 - 72", unit: "ng/mL", category: "Genetic/Other" },
+      { test: "Troponin I", ref: "< 0.04", unit: "ng/mL", category: "Genetic/Other" },
+      { test: "Troponin T", ref: "< 0.01", unit: "ng/mL", category: "Genetic/Other" },
+      { test: "Ammonia", ref: "15 - 45", unit: "µg/dL", category: "Genetic/Other" },
+      { test: "Galactosemia Test", ref: "Normal", unit: "", category: "Genetic/Other" },
+      { test: "Copper (Serum)", ref: "70 - 140", unit: "µg/dL", category: "Genetic/Other" },
+      { test: "Zinc (Serum)", ref: "70 - 120", unit: "µg/dL", category: "Genetic/Other" },
+      { test: "Blood Lead Levels", ref: "< 10", unit: "µg/dL", category: "Genetic/Other" },
+      { test: "Methylmalonic Acid (MMA)", ref: "0.08 - 0.56", unit: "µmol/L", category: "Genetic/Other" },
+      { test: "Ceruloplasmin", ref: "20 - 60", unit: "mg/dL", category: "Genetic/Other" }
+    ];
+    
+    // استخدم localStorage لتخزين التعديلات إذا قام المستخدم بحفظها
+    let globalRefs = JSON.parse(localStorage.getItem("globalRefs")) || defaultRefs;
+    
+    function renderRefTable() {
+      const tbody = document.getElementById("refTableBody");
+      tbody.innerHTML = "";
+      globalRefs.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.setAttribute("data-index", index);
+        row.innerHTML = `
+          <td>${item.test}</td>
+          <td class="refRange" contenteditable="false">${item.ref}</td>
+          <td>${item.unit}</td>
+          <td><input type="text" value="${item.ref}" class="editRefInput" disabled></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+    
+    function toggleEditRefs() {
+      const editBtn = document.getElementById("editRefBtn");
+      const saveBtn = document.getElementById("saveRefBtn");
+      const resetBtn = document.getElementById("resetRefBtn");
+      const inputs = document.querySelectorAll(".editRefInput");
+      const refCells = document.querySelectorAll(".refRange");
+      if(editBtn.textContent.trim() === "Edit / تعديل") {
+        // تفعيل التحرير
+        editBtn.textContent = "Cancel / إلغاء";
+        saveBtn.style.display = "inline-block";
+        resetBtn.style.display = "inline-block";
+        inputs.forEach(input => input.disabled = false);
+        refCells.forEach(cell => cell.setAttribute("contenteditable", "true"));
       } else {
-        resultText.textContent = "يرجى إدخال جميع القيم بشكل صحيح.";
-        resultText.className = "output high";
+        // إلغاء التعديل وإعادة العرض الافتراضي
+        editBtn.textContent = "Edit / تعديل";
+        saveBtn.style.display = "none";
+        resetBtn.style.display = "none";
+        inputs.forEach((input, idx) => {
+          input.disabled = true;
+          input.value = globalRefs[idx].ref;
+        });
+        refCells.forEach((cell, idx) => {
+          cell.textContent = globalRefs[idx].ref;
+          cell.setAttribute("contenteditable", "false");
+        });
       }
     }
+    
+    function saveRefs() {
+      const inputs = document.querySelectorAll(".editRefInput");
+      inputs.forEach((input, idx) => {
+        globalRefs[idx].ref = input.value;
+      });
+      localStorage.setItem("globalRefs", JSON.stringify(globalRefs));
+      toggleEditRefs();
+      renderRefTable();
+      alert("Reference ranges saved successfully.");
+    }
+    
+    function resetRefs() {
+      if(confirm("Are you sure you want to reset to default values?")) {
+        globalRefs = defaultRefs;
+        localStorage.setItem("globalRefs", JSON.stringify(globalRefs));
+        renderRefTable();
+      }
+    }
+    
+    function filterRefs() {
+      const filter = document.getElementById("searchTest").value.toUpperCase();
+      const table = document.getElementById("referenceTable");
+      const tr = table.getElementsByTagName("tr");
+      for(let i = 1; i < tr.length; i++){
+        const td = tr[i].getElementsByTagName("td")[0];
+        if(td) {
+          const txtValue = td.textContent || td.innerText;
+          tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        }
+      }
+    }
+    
+    // عند تحميل الصفحة، يتم تعبئة جدول المراجع
+    renderRefTable();
   </script>
 </body>
 </html>
